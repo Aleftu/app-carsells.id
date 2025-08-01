@@ -1,12 +1,12 @@
 import React from 'react';
-import '../App.css'; // Import your CSS for the stars
+import '../App.css'; 
 import { Link } from 'react-router-dom';
 
 const GradientBackground: React.FC = () => {
   const stars = Array.from({ length: 30 });
 
   return (
-    <div className="relative overflow-hidden min-h-96 bg-gradient-to-b from-[#35467e] to-[#859ae0]">
+    <div className="relative overflow-hidden min-h-96 bg-gradient-to-b from-[#35467e] to-[#8d9bd1]">
       {/* Bintang animasi */}
       {stars.map((_, index) => (
         <span

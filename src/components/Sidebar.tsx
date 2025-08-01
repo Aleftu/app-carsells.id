@@ -2,32 +2,32 @@ import React from "react";
 import { BiUserCircle, BiLogOut } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 
-
 const Sidebar: React.FC = () => {
-    const navigate = useNavigate();
-    const handleLogout = () => {
-        // Logika untuk logout
-        // Misalnya, hapus token dari localStorage atau state global
-        localStorage.removeItem("token");
-        navigate("/");
-    };
-    return(
-        <div className="min-h-screen bg-[#35467e] px-8  w-64 text-white 
-                transition-transform duration-300 ease-in-out
-                z-40 h-screen md:h-auto overflow-y-auto bg-gradient-moving bg-400 animate-gradient-move">
-                    <div className="mt-20 mx-auto text-center">
-            <BiUserCircle size={70} className="mx-auto" /> 
-            <h1>Admin</h1>
-            </div>
+  const navigate = useNavigate();
 
-            <hr className="my-6 border-gray-300 opacity-30"/>
-            <button onClick={handleLogout}
-            className=" w-full flex items-center justify-center gap-2 py-2 px-4 bg-red-500 hover:bg-red-600 text-white rounded-md transition duration-200">
-                <BiLogOut size={20} />
-                Logout
-            </button>
-        </div>
-    )
-}
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+  };
+
+  return (
+    <div className="bg-[#35467e] text-white p-4 h-full min-h-screen md:w-64 sm:w-64">
+      <div className="text-center mb-8 sm:mb-10">
+        <BiUserCircle size={60} className="mx-auto" />
+        <h1 className="text-base sm:text-lg font-semibold">Admin</h1>
+      </div>
+
+      <hr className="my-4 sm:my-6 border-gray-300 opacity-30" />
+
+      <button
+        onClick={handleLogout}
+        className=" flex items-center justify-center gap-2 py-2 px-4 bg-red-500 hover:bg-red-600 text-white rounded-md transition duration-200 md:w-28 lg:w-full sm:justify-center"
+      >
+        <BiLogOut size={20} />
+        Logout
+      </button>
+    </div>
+  );
+};
 
 export default Sidebar;

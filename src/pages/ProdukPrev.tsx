@@ -1,20 +1,20 @@
 import { Link } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { motion } from 'framer-motion';
 
-interface ProdukView {
+interface Mobil {
   id: number;
   merek: string;
   tipe: string;
   harga: string;
   tahun: string;
-  spesifikasi: string;
-  keterangan: string;
-  status: string;
-  foto: {
-    filename: string;
-  };
+  foto: Foto[];
+}
+
+interface Foto {
+  id: number;
+  url: string;
+  mobil_id: number;
 }
 
 const ProdukPrev: React.FC = () => {
@@ -23,22 +23,19 @@ const ProdukPrev: React.FC = () => {
   const [loading, setLoading] = useState(true); // 👈 Tambahkan loading state
 
   useEffect(() => {
-    axios
-      .get('https://api-dealer-car-production.up.railway.app/mobil')
-      .then((res) => {
-        const responseData = res.data;
-        if (Array.isArray(responseData.data)) {
-          setProdukPrev(responseData.data.slice(0, 6));
-        } else {
-          setError('Format data tidak sesuai.');
-        }
-      })
-      .catch(() => {
-        setError('Gagal memuat produk😓.');
-      })
-      .finally(() => {
-        setLoading(false); // 👈 Set loading selesai
-      });
+    const fetchMobil = async () => {
+      try {
+        const response = await axios.get(
+          'https://api-dealer-car-production.up.railway.app/mobil'
+        );
+        setProdukPrev(response.data.data);
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+      }
+    };
+
+    fetchMobil();
   }, []);
 
   // Tampilkan pesan error jika ada
@@ -61,44 +58,46 @@ const ProdukPrev: React.FC = () => {
 
   // Tampilkan produk jika tidak error dan sudah selesai loading
   return (
-    <div className="bg-gray-300 py-4">
+    <div className="bg-[#808dc4] py-4">
       <div className="max-w-screen-xl mx-auto px-4 overflow-x-hidden">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 text-black font-medium">
           {produkprev.map((item) => (
-
             <div
               key={item.id}
-              className="relative border rounded p-3 bg-white shadow max-w-full"
+              className="relative border rounded p-2 bg-white shadow-md w-full text-sm"
             >
               {/* Status badge */}
-              <div className="absolute top-2 left-2 bg-[#3754b1] text-white text-xs font-semibold px-2 py-1 rounded-md shadow">
+              <div className="absolute top-2 left-2 bg-[#5b6aa9] text-white text-xs font-bold px-2 py-1 rounded-md shadow">
                 {item.status}
               </div>
 
               {/* Gambar */}
-              <img
-                src={`https://api-dealer-car-production.up.railway.app/uploads/${item.foto.filename}`}
-                alt={item.tipe}
-                className="w-full h-40 object-cover mb-2 rounded"
-                onError={(e) => (e.currentTarget.src = '/fallback.jpg')} // Optional fallback
-              />
+              <div className="w-full aspect-[4/3] bg-gray-100 mb-2 rounded overflow-hidden flex items-center justify-center">
+                {item.foto && item.foto.length > 0 ? (
+                  <img
+                    src={item.foto[0].url}
+                    alt={`${item.merek} ${item.tipe}`}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-gray-500 text-sm">Tidak ada foto</span>
+                )}
+              </div>
 
               {/* Info produk */}
               <h3 className="font-semibold">
                 {item.merek} {item.tipe}
               </h3>
               <div className="space-y-1 mt-2 text-sm">
-                <p>Tahun: {item.tahun}</p>
-                <p>Spesifikasi: {item.spesifikasi}</p>
-                <p>Keterangan: {item.keterangan}</p>
+                <p>tahun : {item.tahun}</p>
               </div>
-              <p className="mt-2 font-semibold">Harga: Rp {item.harga}</p>
+              <p className="mt-2 font-semibold">Harga : {item.harga}</p>
 
               {/* Tombol Aksi */}
               <div className="flex flex-wrap gap-2 mt-4 text-white">
                 <Link
                   to={`/produk/${item.id}`}
-                  className="bg-[#5266a9] rounded-md w-28 py-1 text-sm text-center"
+                  className="bg-[#6978af] rounded-md w-28 py-1 text-sm text-center"
                 >
                   Lihat detail
                 </Link>
@@ -108,7 +107,7 @@ const ProdukPrev: React.FC = () => {
                   )}%20${encodeURIComponent(item.tipe)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-[#35467e] rounded-md w-24 py-1 text-sm text-center"
+                  className="bg-[#374470] rounded-md w-24 py-1 text-sm text-center"
                 >
                   Hubungi
                 </a>
@@ -118,13 +117,13 @@ const ProdukPrev: React.FC = () => {
         </div>
 
         {/* Tombol Lihat Lebih Banyak */}
-        <div className="text-center mt-6">
+        {/* <div className="text-center mt-6">
           <Link to="/list-produk">
-            <button className="bg-[#35467e] text-white px-6 py-2 rounded-md hover:bg-[#2c3b69] transition">
+            <button className="bg-[#52639e] text-white px-6 py-2 rounded-md hover:bg-[#2c3b69] transition">
               Lihat Lebih Banyak
             </button>
           </Link>
-        </div>
+        </div> */}
       </div>
     </div>
   );

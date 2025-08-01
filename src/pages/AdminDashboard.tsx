@@ -32,6 +32,7 @@ const AdminDashboard: React.FC = () => {
   const [editId, setEditId] = useState<string | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   // State for photo upload
   const [uploadModal, setUploadModal] = useState(false);
@@ -81,6 +82,21 @@ const AdminDashboard: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+
+    const { merk, tipe, tahun, harga, spesifikasi, keterangan, status } = form;
+    if (
+      !merk ||
+      !tipe ||
+      !tahun ||
+      !harga ||
+      !spesifikasi ||
+      !keterangan ||
+      !status
+    ) {
+      toast.error('Semua field harus diisi!');
+      return;
+    }
 
     const token = localStorage.getItem('token');
     if (!token) {
@@ -133,6 +149,8 @@ const AdminDashboard: React.FC = () => {
       toast.error(
         `Gagal: ${error.response?.data?.message || 'Terjadi kesalahan'}`
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -194,11 +212,15 @@ const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-blue-200">
-      <Sidebar />
-      <div className="flex-1 p-6">
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#8d9bd1] font-semibold">
+      <div className="md:w-64 w-full ">
+        <Sidebar />
+      </div>
+      <div className="flex-1 p-4 md:p-6 overflow-x-auto">
         <div className="mx-5 mt-8">
-          <h1 className="text-black font-semibold text-xl">Dashboard Admin</h1>
+          <h1 className="text-gray-800 font-semibold text-xl">
+            Dashboard Admin
+          </h1>
           <hr className="mt-2 w-44 border-black border" />
 
           <div className="mt-8 flex items-center">
@@ -232,7 +254,7 @@ const AdminDashboard: React.FC = () => {
                 setUploadModal(true);
                 setSelectedMobilId(dataMobil[0]._id || dataMobil[0].id);
               }}
-              className="ml-4 bg-green-400 hover:bg-green-400 text-white font-medium rounded-md px-4 py-2 shadow transition duration-200 flex items-center gap-2"
+              className="ml-4 bg-green-500 hover:bg-green-400 text-white font-medium rounded-md px-4 py-2 shadow transition duration-200 flex items-center gap-2"
             >
               <FiUpload className="text-lg" />
               Upload Foto
@@ -240,9 +262,10 @@ const AdminDashboard: React.FC = () => {
           </div>
 
           <div className="mt-6 overflow-x-auto font-semibold">
-            <table className="min-w-full bg-white border shadow text-black">
+            <table className="min-w-full bg-white text-black">
               <thead className="bg-[#5266a9] text-white">
                 <tr>
+                  <th className="p-2">Foto</th>
                   <th className="p-2">Merk</th>
                   <th className="p-2">Tipe</th>
                   <th className="p-2">Tahun</th>
@@ -254,6 +277,18 @@ const AdminDashboard: React.FC = () => {
               <tbody>
                 {dataMobil.map((item, index) => (
                   <tr key={item._id || item.id || index} className="border-t">
+                    <td className="p-2">
+                      {item.foto && item.foto.length > 0 ? (
+                        <img
+                          src={item.foto[0].url}
+                          alt={`${item.merk} ${item.tipe}`}
+                          className="w-20 h-16 object-cover rounded"
+                        />
+                      ) : (
+                        <span className="text-gray-400">Belum ada</span>
+                      )}
+                    </td>
+
                     <td className="p-2">{item.merk}</td>
                     <td className="p-2">{item.tipe}</td>
                     <td className="p-2">{item.tahun}</td>
@@ -328,51 +363,58 @@ const AdminDashboard: React.FC = () => {
                   name="merk"
                   value={form.merk}
                   onChange={handleChange}
-                  className="border p-2"
+                  className="border p-2 bg-white text-black rounded"
                 />
+
                 <label>Tipe</label>
                 <input
                   name="tipe"
                   value={form.tipe}
                   onChange={handleChange}
-                  className="border p-2"
+                  className="border p-2 bg-white text-black rounded"
                 />
+
                 <label>Tahun</label>
                 <input
                   name="tahun"
                   value={form.tahun}
                   onChange={handleChange}
-                  className="border p-2"
+                  className="border p-2 bg-white text-black rounded"
                 />
+
                 <label>Harga</label>
                 <input
                   type="number"
                   name="harga"
                   value={form.harga}
                   onChange={handleChange}
-                  className="border p-2"
+                  className="border p-2 bg-white text-black rounded"
                 />
+
                 <label>Spesifikasi</label>
                 <input
                   name="spesifikasi"
                   value={form.spesifikasi}
                   onChange={handleChange}
-                  className="border p-2"
+                  className="border p-2 bg-white text-black rounded"
                 />
+
                 <label>Keterangan</label>
                 <input
                   name="keterangan"
                   value={form.keterangan}
                   onChange={handleChange}
-                  className="border p-2"
+                  className="border p-2 bg-white text-black rounded"
                 />
+
                 <label>Status</label>
                 <input
                   name="status"
                   value={form.status}
                   onChange={handleChange}
-                  className="border p-2"
+                  className="border p-2 bg-white text-black rounded"
                 />
+
                 <button
                   type="submit"
                   className="bg-[#35467e] hover:bg-[#3851a3] text-white p-2 rounded"
@@ -380,6 +422,7 @@ const AdminDashboard: React.FC = () => {
                   {isEditing ? 'Simpan Perubahan' : 'Upload Produk'}
                 </button>
               </form>
+
               <button
                 onClick={() => setIsModal(false)}
                 className="mt-4 text-red-500 hover:underline"
@@ -400,11 +443,14 @@ const AdminDashboard: React.FC = () => {
               <form
                 onSubmit={async (e) => {
                   e.preventDefault();
-                  if (!foto || !selectedMobilId) {
-                    toast.error('Foto atau ID mobil tidak valid.');
+                  if (!foto || !selectedMobilId || !deskripsi.trim()) {
+                    toast.error(
+                      'Pilih mobil, foto, dan deskripsi terlebih dahulu!'
+                    );
                     return;
                   }
                   const formData = new FormData();
+                  formData.append('id_mobil', selectedMobilId);
                   formData.append('foto', foto);
                   formData.append('deskripsi', deskripsi);
                   try {
@@ -416,7 +462,7 @@ const AdminDashboard: React.FC = () => {
                       return;
                     }
                     await axios.post(
-                      `https://api-dealer-car-production.up.railway.app/mobil/${selectedMobilId}/foto`,
+                      `https://api-dealer-car-production.up.railway.app/upload`,
                       formData,
                       {
                         headers: {
@@ -436,21 +482,38 @@ const AdminDashboard: React.FC = () => {
                       error.response?.data || error.message
                     );
                     toast.error(
-                      `Gagal mengupload foto: ${
-                        error.response?.data?.message || 'Terjadi kesalahan'
-                      }`
+                      `Gagal mengupload foto: ${error.response?.data?.message || 'Terjadi kesalahan'}`
                     );
                   }
                 }}
                 className="grid gap-3"
               >
+                {/* Tambahan untuk pilih mobil */}
+                <label>Pilih Mobil</label>
+                <select
+                  onChange={(e) => setSelectedMobilId(e.target.value)}
+                  value={selectedMobilId || ''}
+                  className="border p-2 bg-white text-black rounded"
+                >
+                  <option value="">-- Pilih Mobil --</option>
+                  {dataMobil.map((mobil) => (
+                    <option
+                      key={mobil._id || mobil.id}
+                      value={mobil._id || mobil.id}
+                    >
+                      {mobil.merk} - {mobil.tipe}
+                    </option>
+                  ))}
+                </select>
+
                 <label>Deskripsi Foto</label>
                 <input
                   type="text"
                   value={deskripsi}
                   onChange={(e) => setDeskripsi(e.target.value)}
-                  className="border p-2"
+                  className="border p-2 bg-white text-black rounded"
                 />
+
                 <label>Foto Mobil</label>
                 <input
                   type="file"
@@ -458,8 +521,9 @@ const AdminDashboard: React.FC = () => {
                   onChange={(e) =>
                     setFoto(e.target.files ? e.target.files[0] : null)
                   }
-                  className="border p-2"
+                  className="border p-2 bg-white text-black rounded"
                 />
+
                 <button
                   type="submit"
                   className="bg-[#35467e] hover:bg-[#3851a3] text-white p-2 rounded"
@@ -467,11 +531,25 @@ const AdminDashboard: React.FC = () => {
                   Upload Foto
                 </button>
               </form>
+
+              <button
+                onClick={() => setUploadModal(false)}
+                className="mt-4 w-full text-center text-red-500 hover:underline"
+              >
+                Tutup
+              </button>
             </div>
           </div>
         )}
 
         <ToastContainer />
+
+        {loading && (
+          <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex flex-col items-center justify-center z-[9999]">
+            <div className="w-16 h-16 border-4 border-[#35467e] border-t-transparent rounded-full animate-spin"></div>
+            <p className="mt-4 text-white font-semibold">Memuat...</p>
+          </div>
+        )}
       </div>
     </div>
   );
