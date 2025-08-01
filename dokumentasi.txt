@@ -1,0 +1,11 @@
+Aktivitas user :
+1. user mengunjungi website tanpa login
+2. user bisa melihat katalog produk
+
+Aktivitas Admin :
+1. admin login sebagai admin 
+2. admin melihat katalog produk
+3. admin membuat katalog produk
+4. admin mengedit katalog produk
+5. admin menghapus katalog produk
+
