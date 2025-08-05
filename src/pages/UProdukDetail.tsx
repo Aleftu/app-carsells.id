@@ -2,12 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import {
-  FaArrowLeft,
-  FaPhoneAlt,
-  FaEnvelope,
-  FaWhatsapp,
-} from 'react-icons/fa';
+import { FaPhoneAlt, FaEnvelope, FaWhatsapp } from 'react-icons/fa';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -73,11 +68,26 @@ const ProdukDetail: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-[#beccfc] text-gray-800 font-semibold">
       <div className="w-full max-w-4xl mx-auto px-4 py-6 md:py-10 flex-grow">
         <button
-          onClick={() => navigate('/list-produk')}
-          className="mb-4 px-4 py-2 bg-white text-[#35467e] border-none border-[#35467e] rounded hover:bg-[#35467e] hover:text-white transition flex items-center gap-2"
+          onClick={() => navigate('/')}
+          className="mb-4 px-4 py-2 text-[#35467e] border-none border-[#35467e] rounded  hover:text-white transition flex items-center gap-2"
         >
-          <FaArrowLeft />
-          Kembali ke Produk
+          <span className="w-11 h-11 flex items-center justify-center bg-[#35467e] text-white rounded-full text-sm font-bold">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M10 12L6 8l4-4"
+                stroke="currentColor"
+                strokeWidth="2"
+                fill="none"
+              />
+            </svg>
+          </span>
+         
         </button>
 
         {/* Judul */}

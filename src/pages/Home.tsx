@@ -50,11 +50,11 @@ const HomePage = () => {
         </div>
 
         {/* Kontak Section */}
-        <div id="kontak" className="bg-[#8d9bd1] relative z-10 mb-5">
+        <div id="kontak" className="bg-[#808dc4] relative z-10 mb-5">
           <h1 className="mb-5 text-center mt-5 font-semibold text-xl">
             Informasi Kontak
           </h1>
-          <div className="mb-5 card rounded-md mt-3 bg-[#8d9bd1] pb-5">
+          <div className="mb-5 card rounded-md mt-3 pb-5">
             <KontakComponent />
           </div>
         </div>

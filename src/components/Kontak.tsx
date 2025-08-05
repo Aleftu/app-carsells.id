@@ -8,8 +8,8 @@ import {
 
 const KontakComponent: React.FC = () => {
   return (
-      <div className="mx-auto px-5 w-full  bg-[#8d9bd1] text-white">
-      <h1 className="text-xl font-bold mb-4 text-blue-800">Hubungi Kami</h1>
+      <div className="mx-auto px-5 w-full  bg-[#808dc4] text-[#213384] font-semibold">
+      <h1 className="text-xl font-bold mb-4 ">Hubungi Kami</h1>
 
       <div className="space-y-4 text-base">
         <div className="flex items-center">
@@ -18,7 +18,7 @@ const KontakComponent: React.FC = () => {
             href="https://wa.me/6281234567890"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-600 hover:underline"
+            className="hover:underline"
           >
             +62 812-3456-7890 (Chat via WhatsApp)
           </a>
