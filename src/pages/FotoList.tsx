@@ -28,8 +28,24 @@ const FotoList: React.FC = () => {
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
 
-  // Modal konfirmasi hapus
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
+  // ⬇️ Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentFotoList = fotoList.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(fotoList.length / itemsPerPage);
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  const goToPrevPage = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -45,10 +61,8 @@ const FotoList: React.FC = () => {
         'https://api-dealer-car-production.up.railway.app/mobil'
       );
       const data = Array.isArray(res.data) ? res.data : res.data.data;
-      console.log('🚗 mobilList:', data);
       setMobilList(data || []);
     } catch (error) {
-      console.error('❌ Gagal ambil mobil:', error);
       toast.error('Gagal mengambil data mobil.');
     }
   };
@@ -59,10 +73,8 @@ const FotoList: React.FC = () => {
         'https://api-dealer-car-production.up.railway.app/foto'
       );
       const data = Array.isArray(res.data) ? res.data : res.data.data;
-      console.log('🖼️ fotoList:', data);
       setFotoList(data || []);
     } catch (error) {
-      console.error('❌ Gagal ambil foto:', error);
       toast.error('Gagal mengambil data foto.');
     }
   };
@@ -91,14 +103,12 @@ const FotoList: React.FC = () => {
     setLoadingSubmit(true);
 
     try {
-      if (editingId) {
-        const formData = new FormData();
-        formData.append('deskripsi', deskripsi);
-        formData.append('id_mobil', selectedMobilId);
-        if (file) {
-          formData.append('foto', file); // harus "foto" sesuai backend
-        }
+      const formData = new FormData();
+      formData.append('deskripsi', deskripsi);
+      formData.append('id_mobil', selectedMobilId);
+      if (file) formData.append('foto', file);
 
+      if (editingId) {
         await axios.put(
           `https://api-dealer-car-production.up.railway.app/upload/${editingId}`,
           formData,
@@ -109,16 +119,11 @@ const FotoList: React.FC = () => {
             },
           }
         );
-
         toast.success('Data foto berhasil diupdate.');
       } else {
-        const formData = new FormData();
-        formData.append('foto', file!); // nama field harus "foto"
-        formData.append('deskripsi', deskripsi);
-        formData.append('id_mobil', selectedMobilId);
-
+        formData.append('foto', file!);
         await axios.post(
-          'https://api-dealer-car-production.up.railway.app/upload',
+          `https://api-dealer-car-production.up.railway.app/upload`,
           formData,
           {
             headers: {
@@ -127,17 +132,13 @@ const FotoList: React.FC = () => {
             },
           }
         );
-
         toast.success('Foto berhasil diupload.');
       }
 
       closeModal();
-      fetchFoto();
+      await fetchFoto();
+      setCurrentPage(1); // reset ke halaman 1
     } catch (error: any) {
-      console.error(
-        '❌ Error saat simpan:',
-        error.response?.data || error.message
-      );
       toast.error('Gagal menyimpan data.');
     } finally {
       setLoadingSubmit(false);
@@ -159,17 +160,18 @@ const FotoList: React.FC = () => {
   const handleDeleteConfirmed = async () => {
     const token = localStorage.getItem('token');
     if (!token || !confirmDeleteId) return;
-setLoadingDelete(true);
+    setLoadingDelete(true);
     try {
       await axios.delete(
-        `https://api-dealer-car-production.up.railway.app/foto/${confirmDeleteId}`, //aku gak tau end poinnya benr atau slah(kamu bisa ganti disini kalo aku slh)
+        `https://api-dealer-car-production.up.railway.app/foto/${confirmDeleteId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       toast.success('Foto berhasil dihapus.');
       setConfirmDeleteId(null);
-      fetchFoto();
+      await fetchFoto();
+      setCurrentPage(1); // reset ke halaman 1
     } catch {
       toast.error('Gagal menghapus foto.');
     } finally {
@@ -189,7 +191,6 @@ setLoadingDelete(true);
         </button>
       </div>
 
-      {/* Modal Form Upload/Edit */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 px-4">
           <div className="bg-white w-11/12 sm:w-full max-w-md p-6 rounded shadow text-gray-700">
@@ -277,19 +278,17 @@ setLoadingDelete(true);
                 Batal
               </button>
               <button
-  onClick={handleDeleteConfirmed}
-  disabled={loadingDelete}
-  className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 disabled:opacity-50"
->
-  {loadingDelete ? 'Menghapus...' : 'Hapus'}
-</button>
-
+                onClick={handleDeleteConfirmed}
+                disabled={loadingDelete}
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 disabled:opacity-50"
+              >
+                {loadingDelete ? 'Menghapus...' : 'Hapus'}
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Tabel Foto */}
       <div className="overflow-x-auto mt-6">
         <table className="min-w-full bg-white text-black text-sm sm:text-base border-collapse">
           <thead className="bg-[#5266a9] text-white">
@@ -310,13 +309,13 @@ setLoadingDelete(true);
                 </td>
               </tr>
             ) : (
-              fotoList.map((foto, index) => {
+              currentFotoList.map((foto, index) => {
                 const mobil = mobilList.find(
                   (m) => String(m.id) === String(foto.id_mobil)
                 );
                 return (
                   <tr key={foto.id} className="border-t text-center">
-                    <td className="p-2">{index + 1}</td>
+                    <td className="p-2">{indexOfFirstItem + index + 1}</td>
                     <td className="p-2">
                       <img
                         src={foto.url}
@@ -351,6 +350,27 @@ setLoadingDelete(true);
             )}
           </tbody>
         </table>
+
+        {/* Pagination */}
+        {fotoList.length > 0 && (
+          <div className="flex justify-center items-center mt-4 gap-2 text-white">
+            <button
+              onClick={goToPrevPage}
+              disabled={currentPage === 1}
+              className="px-2 py-1 bg-[#35467e] rounded disabled:opacity-50"
+            >
+              &lt;
+            </button>
+            <span className="text-sm sm:text-base">{currentPage}</span>
+            <button
+              onClick={goToNextPage}
+              disabled={currentPage === totalPages}
+              className="px-2 py-1 bg-[#35467e] rounded disabled:opacity-50"
+            >
+              &gt;
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

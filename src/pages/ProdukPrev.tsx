@@ -20,7 +20,7 @@ interface Foto {
 const ProdukPrev: React.FC = () => {
   const [produkprev, setProdukPrev] = useState<ProdukView[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true); // 👈 Tambahkan loading state
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
     const fetchMobil = async () => {

@@ -143,7 +143,7 @@ const ProdukDetail: React.FC = () => {
           <p>
             <span className="font-semibold">Status:</span> {produk.status}
           </p>
-          <p className="text-lg font-bold text-green-700">
+          <p className="text-lg font-bold text-[#35467e]">
             Harga: Rp{' '}
             {new Intl.NumberFormat('id-ID').format(Number(produk.harga))}
           </p>
