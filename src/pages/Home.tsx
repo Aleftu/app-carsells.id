@@ -47,7 +47,7 @@ const HomePage = () => {
             <div className="absolute -top-6 right-0 w-14 h-7 bg-white rounded-bl-full"></div>
 
             {/* Teks */}
-            <h2 className="text-gray-600 text-xl md:text-2xl font-extrabold">
+            <h2 className="text-white text-xl md:text-2xl font-extrabold">
               Beli Mobil 45Motor Certified
             </h2>
           </div>
