@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { FaReact } from 'react-icons/fa';
+import { FaArrowUp } from 'react-icons/fa';
 import Loading from '../components/Loading';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -22,13 +22,11 @@ interface Mobil {
   foto: Foto[];
 }
 
-const ITEMS_PER_PAGE = 15;
-
 const ProdukList: React.FC = () => {
   const [mobilList, setMobilList] = useState<Mobil[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
     const fetchMobil = async () => {
@@ -46,27 +44,18 @@ const ProdukList: React.FC = () => {
     fetchMobil();
   }, []);
 
-  const totalPages = Math.ceil(mobilList.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentMobilList = mobilList.slice(startIndex, endIndex);
+  // Munculkan tombol scroll to top saat user scroll ke bawah
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+  const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex flex-col bg-[#beccfc] font-semibold">
-        <Navbar />
-        <main className="flex-grow container mx-auto max-w-screen-xl px-4 py-6">
-          <p className="text-center text-red-500">{error}</p>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
 
   if (loading) {
     return (
@@ -80,19 +69,30 @@ const ProdukList: React.FC = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col bg-[#beccfc] font-semibold">
+        <Navbar />
+        <main className="flex-grow container mx-auto max-w-screen-xl px-4 py-6">
+          <p className="text-center text-red-500">{error}</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#beccfc] font-semibold">
+    <div className="min-h-screen flex flex-col bg-[#beccfc] font-semibold relative">
       <Navbar />
       <main className="flex-grow container mx-auto max-w-screen-xl px-4 py-6">
         {/* Header */}
         <div className="flex flex-col items-center mb-6">
-          <FaReact className="text-4xl text-blue-500 mb-2" />
           <h1 className="text-2xl font-bold text-gray-700">Daftar Produk Mobil</h1>
         </div>
 
         {/* Grid Produk */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {currentMobilList.map((mobil) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {mobilList.map((mobil) => (
             <div key={mobil.id} className="bg-white text-gray-700 rounded-xl shadow-md overflow-hidden relative">
               {mobil.foto && mobil.foto.length > 0 ? (
                 <img
@@ -119,10 +119,10 @@ const ProdukList: React.FC = () => {
                 </p>
 
                 {/* Tombol Aksi */}
-                <div className="mt-4 space-x-2">
+                <div className="mt-4 flex flex-col sm:flex-row gap-2">
                   <Link
                     to={`/produk/${mobil.id}`}
-                    className="inline-block px-3 py-1 bg-[#6978af] text-white text-sm rounded hover:bg-[#7086d6]"
+                    className="w-full text-center px-3 py-1 bg-[#6978af] text-white text-sm rounded hover:bg-[#7086d6]"
                   >
                     Lihat Detail
                   </Link>
@@ -130,7 +130,7 @@ const ProdukList: React.FC = () => {
                     href={`https://wa.me/6281234567890?text=Halo,%20saya%20tertarik%20dengan%20mobil%20${mobil.merek}%20${mobil.tipe}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-block px-3 py-1 bg-[#374470] text-white text-sm rounded hover:bg-[#526091]"
+                    className="w-full text-center px-3 py-1 bg-[#374470] text-white text-sm rounded hover:bg-[#526091]"
                   >
                     Hubungi
                   </a>
@@ -139,27 +139,18 @@ const ProdukList: React.FC = () => {
             </div>
           ))}
         </div>
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex justify-center mt-8 space-x-2">
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i + 1}
-                onClick={() => handlePageChange(i + 1)}
-                className={`px-3 py-1 rounded ${
-                  currentPage === i + 1
-                    ? 'bg-[#374470] text-white'
-                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
-        )}
       </main>
-      
+
+      {/* Scroll to Top Button */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 z-50 bg-[#374470] hover:bg-[#526091] text-white p-3 rounded-full shadow-lg transition duration-300"
+        >
+          <FaArrowUp />
+        </button>
+      )}
+
       <Footer />
     </div>
   );

@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import HomePage from './pages/Home';
 import Login from './pages/Login';
-import FotoList from './pages/FotoList';
+import ProdukList from './pages/ProdukList';
 import ProdukDetail from './pages/UProdukDetail';
 import AdminDashboard from './pages/AdminDashboard';
 import Kontak from './pages/Kontak';
@@ -19,6 +19,7 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/list-produk" element={<ProdukList />} />
         <Route path="/produk/:id" element={<ProdukDetail />} />
         <Route path="/dashboard" element={<AdminDashboard />} />
     

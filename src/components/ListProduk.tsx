@@ -50,9 +50,7 @@ const ListProduk: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#beccfc]">
-        <p className="text-red-500 font-semibold">{error}</p>
-      </div>
+        <p className="text-red-500 font-semibold text-center">{error}</p>
     );
   }
 
@@ -65,7 +63,7 @@ const ListProduk: React.FC = () => {
         </div>
 
         {/* Produk Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
           {mobilList.map((mobil) => (
             <div
               key={mobil.id}

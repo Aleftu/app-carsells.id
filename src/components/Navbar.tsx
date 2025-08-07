@@ -42,7 +42,7 @@ const Navbar = () => {
           </ul>
         </div>
         <a
-          href="#"
+          href="/"
           className="mx-5 text-xl font-extrabold first-letter:text-[#567af3] first-letter:text-3xl"
         >
           45Motor
