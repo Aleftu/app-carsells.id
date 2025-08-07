@@ -70,7 +70,7 @@ const Footer: React.FC = () => {
             />
             <button
               type="submit"
-              className="bg-[#314159] text-white font-bold px-4 py-2 rounded hover:bg-yellow-300"
+              className="bg-[#314159] text-white font-bold px-4 py-2 rounded hover:bg-[#909cd2]"
             >
               Kirim
             </button>

@@ -51,7 +51,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#697ec4] relative px-4 py-4 flex items-center justify-center">
+    <div className="min-h-screen bg-[#909cd2] relative px-4 py-4 flex items-center justify-center">
       {/* ⬅ Tombol kembali di pojok kiri atas */}
       <button
         onClick={() => navigate('/')}
@@ -67,7 +67,7 @@ export default function Login() {
           Selamat datang Admin!
         </h1>
 
-        <div className="card bg-[#4e66b4] shadow-lg rounded-lg p-8">
+        <div className="card bg-[#6a79bd] shadow-lg rounded-lg p-8">
           <h2 className="text-2xl font-bold text-center mb-6 text-[#cfd5e8]">
             Login
           </h2>
