@@ -3,7 +3,6 @@ import Navbar from '../components/Navbar';
 import GradientBackground from '../components/Background';
 import Loading from '../components/Loading';
 import ProdukPrev from './ProdukPrev';
-import KontakComponent from '../components/Kontak';
 import Footer from '../components/Footer';
 
 const HomePage = () => {
@@ -16,7 +15,6 @@ const HomePage = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Scroll ke hash jika ada (misal dari /#produk-preview)
   useEffect(() => {
     const hash = window.location.hash;
     if (hash) {
@@ -38,26 +36,26 @@ const HomePage = () => {
       <Navbar />
       <GradientBackground />
 
-      <div className="bg-[#808dc4]">
-        {/* Produk Section */}
-        <h1 className="text-center mt-1 font-semibold text-lg">
-          Daftar Produk
-        </h1>
-        <div className="mb-7 card rounded-md mt-3">
-          <section id="produk-preview" className="mt-12">
-            <ProdukPrev />
-          </section>
-        </div>
+      {/* Daftar Produk */}
+      <div className="bg-slate-200 py-6">
+        <div className="flex justify-center mb-8">
+          <div className="relative w-[92%] md:w-[80%] bg-[#bcc3e4] py-6 px-4 rounded-b-3xl shadow-lg text-center overflow-visible">
+            {/* Notch kiri */}
+            <div className="absolute -top-6 left-0 w-14 h-7 bg-white rounded-br-full"></div>
 
-        {/* Kontak Section */}
-        <div id="kontak" className="bg-[#808dc4] relative z-10 mb-5">
-          <h1 className="mb-5 text-center mt-5 font-semibold text-xl">
-            Informasi Kontak
-          </h1>
-          <div className="mb-5 card rounded-md mt-3 pb-5">
-            <KontakComponent />
+            {/* Notch kanan */}
+            <div className="absolute -top-6 right-0 w-14 h-7 bg-white rounded-bl-full"></div>
+
+            {/* Teks */}
+            <h2 className="text-gray-600 text-xl md:text-2xl font-extrabold">
+              Beli Mobil 45Motor Certified
+            </h2>
           </div>
         </div>
+
+        <section id="produk-preview" className="card rounded-lg p-5">
+          <ProdukPrev />
+        </section>
       </div>
 
       <Footer />

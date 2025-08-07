@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
-import FotoList from '../pages/FotoList';
+import FotoList from './FotoList';
 import { toast, ToastContainer } from 'react-toastify';
 import { FiPlus, FiUpload, FiEdit, FiTrash } from 'react-icons/fi';
 import 'react-toastify/dist/ReactToastify.css';
@@ -347,26 +347,16 @@ const AdminDashboard: React.FC = () => {
                 </table>
 
                 {/* {pagination} */}
-                <div className="flex justify-center items-center mt-4 gap-2 text-white">
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.max(prev - 1, 1))
-                    }
-                    disabled={currentPage === 1}
-                    className="px-2 py-1 bg-[#35467e] rounded disabled:opacity-50"
-                  >
-                    &lt;
-                  </button>
-                  <span className="text-sm sm:text-base">{currentPage}</span>
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                    }
-                    disabled={currentPage === totalPages}
-                    className="px-2 py-1 bg-[#35467e] rounded disabled:opacity-50"
-                  >
-                    &gt;
-                  </button>
+                <div className="flex justify-center mt-4 gap-2">
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentPage(i + 1)}
+                      className={`px-3 py-1 rounded ${currentPage === i + 1 ? 'bg-[#5266a9] text-white' : 'bg-white text-black border'}`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>

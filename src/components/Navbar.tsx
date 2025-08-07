@@ -21,7 +21,7 @@ const Navbar = () => {
   return (
     <div
       className={`navbar sticky top-0 z-50 shadow transition-colors duration-300 ${
-        scroll ? "bg-[#808dc4] text-white" : "bg-[#35467e] text-white"
+        scroll ? "bg-[#909cd2] text-white" : "bg-[#35467e] text-white"
       }`}
     >
       <div className="navbar-start">
@@ -34,7 +34,7 @@ const Navbar = () => {
           </label>
           <ul
             tabIndex={0}
-            className="menu menu-md dropdown-content mt-3 z-[1] p-2 shadow-md bg-slate-300 text-black rounded-box w-52"
+            className="menu menu-md dropdown-content mt-3 z-[1] p-2 shadow-md bg-slate-300 text-black rounded-box w-52 hover:bg-[#6a79bd] hover:text-white"
           >
             <li><a href="#">Beranda</a></li>
             <li><button onClick={scrollToProduk}>Produk</button></li>

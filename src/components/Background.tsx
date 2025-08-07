@@ -6,7 +6,7 @@ const GradientBackground: React.FC = () => {
   const stars = Array.from({ length: 30 });
 
   return (
-    <div className="relative overflow-hidden min-h-96 bg-gradient-to-b from-[#35467e] to-[#8d9bd1]">
+    <div className="relative overflow-hidden min-h-96 bg-gradient-to-b from-[#35467e] to-[#aebdf7]">
       {/* Bintang animasi */}
       {stars.map((_, index) => (
         <span
@@ -29,7 +29,7 @@ const GradientBackground: React.FC = () => {
       <p className="text-center mt-2 text-xl text-white">Jelajahi mobil impian Anda di sini</p>
       <p className="text-center font-bold text-white">Berbagai merek dan tipe terbaik</p>
       <div className="flex justify-center mt-6">
-        <Link to="/" className="bg-[#35467e] hover:bg-[#2b3a6b] text-white px-6 py-2 rounded-md transition">
+        <Link to="/list-produk" className="bg-[#35467e] hover:bg-[#2b3a6b] text-white px-6 py-2 rounded-md transition">
           Eksplor
         </Link>
       </div>

@@ -9,6 +9,13 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import Footer from '../components/Footer';
 import Loading from '../components/Loading';
+import ProdukPrev from './ProdukPrev';
+import ProsesPembelian from '../components/ProseSell';
+
+interface FotoMobil {
+  url: string;
+  deskripsi?: string;
+}
 
 interface ProdukDetailView {
   id: number;
@@ -19,7 +26,7 @@ interface ProdukDetailView {
   spesifikasi: string;
   keterangan: string;
   status: string;
-  foto: string[];
+  foto: FotoMobil[];
 }
 
 const ProdukDetail: React.FC = () => {
@@ -27,6 +34,7 @@ const ProdukDetail: React.FC = () => {
   const navigate = useNavigate();
 
   const [produk, setProduk] = useState<ProdukDetailView | null>(null);
+  const [tab, setTab] = useState<'detail' | 'inspeksi'>('detail');
 
   useEffect(() => {
     axios
@@ -38,9 +46,11 @@ const ProdukDetail: React.FC = () => {
           return;
         }
 
-        // ✅ Ambil foto dari 'url'
-        const fotoUrls = Array.isArray(found.foto)
-          ? found.foto.map((f: any) => f.url)
+        const fotoArray: FotoMobil[] = Array.isArray(found.foto)
+          ? found.foto.map((f: any) => ({
+              url: f.url,
+              deskripsi: f.deskripsi || '', // optional
+            }))
           : [];
 
         const produkBaru: ProdukDetailView = {
@@ -52,7 +62,7 @@ const ProdukDetail: React.FC = () => {
           spesifikasi: found.spesifikasi,
           keterangan: found.keterangan,
           status: found.status,
-          foto: fotoUrls,
+          foto: fotoArray,
         };
 
         setProduk(produkBaru);
@@ -67,27 +77,17 @@ const ProdukDetail: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-[#beccfc] text-gray-800 font-semibold">
       <div className="w-full max-w-4xl mx-auto px-4 py-6 md:py-10 flex-grow">
+
+        {/* Tombol Kembali */}
         <button
           onClick={() => navigate('/')}
-          className="mb-4 px-4 py-2 text-[#35467e] border-none border-[#35467e] rounded  hover:text-white transition flex items-center gap-2"
+          className="mb-4 px-4 py-2 text-[#35467e] rounded hover:text-white transition flex items-center gap-2 group"
         >
-          <span className="w-11 h-11 flex items-center justify-center bg-[#35467e] text-white rounded-full text-sm font-bold">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M10 12L6 8l4-4"
-                stroke="currentColor"
-                strokeWidth="2"
-                fill="none"
-              />
+          <span className="w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center bg-[#35467e] text-white rounded-full text-sm sm:text-base font-bold transition">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="2" fill="none" />
             </svg>
           </span>
-         
         </button>
 
         {/* Judul */}
@@ -110,7 +110,7 @@ const ProdukDetail: React.FC = () => {
               produk.foto.map((img, index) => (
                 <SwiperSlide key={index}>
                   <img
-                    src={img}
+                    src={img.url}
                     alt={`Foto ${index + 1}`}
                     className="w-full max-h-[300px] sm:max-h-[400px] object-cover"
                   />
@@ -126,29 +126,60 @@ const ProdukDetail: React.FC = () => {
           </Swiper>
         </div>
 
-        {/* Detail Produk */}
-        <div className="space-y-3 bg-white rounded-xl shadow px-4 py-5 sm:px-6 sm:py-6 mb-16 text-gray-700">
-          <h1 className="text-2xl text-gray-600 ">Spesifikasi Detail</h1>
-          <p>
-            <span className="font-semibold">Tahun:</span> {produk.tahun}
-          </p>
-          <p>
-            <span className="font-semibold">Spesifikasi:</span>{' '}
-            {produk.spesifikasi}
-          </p>
-          <p>
-            <span className="font-semibold">Keterangan:</span>{' '}
-            {produk.keterangan}
-          </p>
-          <p>
-            <span className="font-semibold">Status:</span> {produk.status}
-          </p>
-          <p className="text-lg font-bold text-[#35467e]">
-            Harga: Rp{' '}
-            {new Intl.NumberFormat('id-ID').format(Number(produk.harga))}
-          </p>
+        {/* Tabs */}
+        <div className="flex justify-center gap-4 mb-6">
+          <button
+            onClick={() => setTab('detail')}
+            className={`px-4 py-2 rounded-t-md font-semibold ${
+              tab === 'detail'
+                ? 'bg-white text-[#35467e] shadow'
+                : 'bg-[#d1d5db] text-gray-500'
+            }`}
+          >
+            Detail Mobil
+          </button>
+          <button
+            onClick={() => setTab('inspeksi')}
+            className={`px-4 py-2 rounded-t-md font-semibold ${
+              tab === 'inspeksi'
+                ? 'bg-white text-[#35467e] shadow'
+                : 'bg-[#d1d5db] text-gray-500'
+            }`}
+          >
+            Laporan Inspeksi
+          </button>
         </div>
 
+        {/* Tab Content */}
+        {tab === 'detail' && (
+          <div className="space-y-3 bg-white rounded-xl shadow px-4 py-5 sm:px-6 sm:py-6 mb-10 text-gray-700">
+            <h1 className="text-2xl text-gray-600 ">Spesifikasi Detail</h1>
+            <p><span className="font-semibold">Tahun:</span> {produk.tahun}</p>
+            <p><span className="font-semibold">Spesifikasi:</span> {produk.spesifikasi}</p>
+            <p><span className="font-semibold">Keterangan:</span> {produk.keterangan}</p>
+            <p><span className="font-semibold">Status:</span> {produk.status}</p>
+            <p className="text-lg font-bold text-[#fb923c]">
+              Harga: Rp {new Intl.NumberFormat('id-ID').format(Number(produk.harga))}
+            </p>
+          </div>
+        )}
+
+        {tab === 'inspeksi' && (
+          <div className="bg-white rounded-xl shadow px-4 py-6 mb-10 text-gray-700">
+            <h1 className="text-xl font-semibold mb-4 text-[#35467e]">Laporan Inspeksi</h1>
+            {produk.foto.length === 0 ? (
+              <p className="text-sm text-gray-500">Belum ada laporan inspeksi untuk mobil ini.</p>
+            ) : (
+              <ul className="list-disc pl-6 space-y-2 text-sm">
+                {produk.foto.map((foto, idx) => (
+                  <li key={idx}>{foto.deskripsi || 'Tidak ada deskripsi.'}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+
+        {/* Kontak Penjual */}
         <div className="flex justify-center items-center">
           <div className="w-full max-w-sm space-y-4 bg-[#808dc4] shadow-md rounded-md px-4 py-5 text-white text-sm">
             <h1 className="text-xl">Kontak penjual</h1>
@@ -171,6 +202,17 @@ const ProdukDetail: React.FC = () => {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Proses Pembelian */}
+      <ProsesPembelian />
+
+      {/* Produk Lain */}
+      <h1 className="text-center text-2xl text-[#35467e] font-bold my-5">
+        Produk lain mungkin anda suka
+      </h1>
+      <div className="mb-10">
+        <ProdukPrev />
       </div>
 
       {/* Footer */}
