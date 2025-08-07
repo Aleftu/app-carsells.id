@@ -146,7 +146,7 @@ const ProdukDetail: React.FC = () => {
                 : 'bg-[#d1d5db] text-gray-500'
             }`}
           >
-            Laporan Inspeksi
+            Deskripsi Foto
           </button>
         </div>
 
@@ -166,9 +166,9 @@ const ProdukDetail: React.FC = () => {
 
         {tab === 'inspeksi' && (
           <div className="bg-white rounded-xl shadow px-4 py-6 mb-10 text-gray-700">
-            <h1 className="text-xl font-semibold mb-4 text-[#35467e]">Laporan Inspeksi</h1>
+            <h1 className="text-xl font-semibold mb-4 text-[#35467e]">Deskripsi Foto</h1>
             {produk.foto.length === 0 ? (
-              <p className="text-sm text-gray-500">Belum ada laporan inspeksi untuk mobil ini.</p>
+              <p className="text-sm text-gray-500">Belum ada Deskripsi Foto untuk mobil ini.</p>
             ) : (
               <ul className="list-disc pl-6 space-y-2 text-sm">
                 {produk.foto.map((foto, idx) => (

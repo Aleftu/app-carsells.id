@@ -103,7 +103,7 @@ const ProdukPrev: React.FC = () => {
                 <p>tahun : {item.tahun}</p>
               </div>
               <p className="mt-2 font-semibold text-[#fb923c]">
-                Harga : {item.harga}
+                Rp : {item.harga}
               </p>
 
               <div className="flex flex-row gap-2 mt-4 text-white">

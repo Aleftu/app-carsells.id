@@ -4,6 +4,7 @@ import GradientBackground from '../components/Background';
 import Loading from '../components/Loading';
 import ProdukPrev from './ProdukPrev';
 import Footer from '../components/Footer';
+import ListProduk from '../components/ListProduk';
 
 const HomePage = () => {
   const [loading, setLoading] = useState(true);
@@ -54,7 +55,7 @@ const HomePage = () => {
         </div>
 
         <section id="produk-preview" className="card rounded-lg p-5">
-          <ProdukPrev />
+          <ListProduk />
         </section>
       </div>
 
