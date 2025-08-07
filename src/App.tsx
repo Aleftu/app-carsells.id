@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/Home';
 import Login from './pages/Login';
 import ProdukList from './pages/ProdukList';
@@ -9,10 +9,6 @@ import Kontak from './pages/Kontak';
 
 // Bungkus App dengan komponen untuk bisa pakai useLocation
 function AppContent() {
-  const location = useLocation();
-  const isLoginPage = location.pathname === '/login';
-  const isDashboardPage = location.pathname === '/dashboard';
-
   return (
     <div className="bg-base-100">
   
@@ -22,7 +18,6 @@ function AppContent() {
         <Route path="/list-produk" element={<ProdukList />} />
         <Route path="/produk/:id" element={<ProdukDetail />} />
         <Route path="/dashboard" element={<AdminDashboard />} />
-    
         <Route path="/kontak" element={<Kontak />} />
       </Routes>
     </div>

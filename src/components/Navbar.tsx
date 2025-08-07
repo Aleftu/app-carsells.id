@@ -36,9 +36,9 @@ const Navbar = () => {
             tabIndex={0}
             className="menu menu-md dropdown-content mt-3 z-[1] p-2 shadow-md bg-slate-300 text-black rounded-box w-52 hover:bg-[#6a79bd] hover:text-white"
           >
-            <li><a href="#">Beranda</a></li>
+            <li><a href="/">Beranda</a></li>
             <li><button onClick={scrollToProduk}>Produk</button></li>
-            <li><a href="#kontak">Kontak</a></li>
+            <li><a href="/kontak">Kontak</a></li>
           </ul>
         </div>
         <a
@@ -51,9 +51,9 @@ const Navbar = () => {
 
       <div className="navbar-end hidden lg:flex">
         <ul className="menu menu-horizontal px-1 text-xl">
-          <li><a href="#">Beranda</a></li>
+          <li><a href="/">Beranda</a></li>
           <li><button onClick={scrollToProduk}>Produk</button></li>
-          <li><a href="#kontak">Kontak</a></li>
+          <li><a href="/kontak">Kontak</a></li>
         </ul>
       </div>
     </div>

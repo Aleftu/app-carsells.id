@@ -1,6 +1,6 @@
 import React from "react";
 import { BiUserCircle, BiLogOut } from "react-icons/bi";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface SidebarProps {
   onSelectMenu: (menu: 'produk' | 'foto') => void;

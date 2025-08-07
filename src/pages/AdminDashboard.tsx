@@ -74,13 +74,16 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm((prevForm) => ({
-      ...prevForm,
-      [name]: name === 'harga' ? parseInt(value) : value,
-    }));
-  };
+ const handleChange = (
+  e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+) => {
+  const { name, value } = e.target;
+  setForm((prevForm) => ({
+    ...prevForm,
+    [name]: name === 'harga' ? parseInt(value) : value,
+  }));
+};
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

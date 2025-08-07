@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FaEye } from 'react-icons/fa';
-import 'swiper/css';
-import 'swiper/css/navigation';
+import 'swiper';
+import 'swiper/modules/navigation/navigation.css';
 import { Navigation } from 'swiper/modules';
 
 interface Mobil {

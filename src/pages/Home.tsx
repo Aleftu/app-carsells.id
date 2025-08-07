@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import GradientBackground from '../components/Background';
 import Loading from '../components/Loading';
-import ProdukPrev from './ProdukPrev';
 import Footer from '../components/Footer';
 import ListProduk from '../components/ListProduk';
 

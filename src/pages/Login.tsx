@@ -41,11 +41,11 @@ export default function Login() {
       } else {
         setErrorMessage('Login berhasil, tapi data user tidak ditemukan.');
       }
-    } catch (err) {
-      const message =
-        err.response?.data?.message || 'Username atau password salah';
-      setErrorMessage(message);
-    } finally {
+   } catch (error: unknown) {
+  const message =
+    (error as any).response?.data?.message || 'Username atau password salah';
+  setErrorMessage(message);
+} finally {
       setIsLoading(false);
     }
   };

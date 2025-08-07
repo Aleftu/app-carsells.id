@@ -3,9 +3,6 @@ import {
   FaInstagram,
   FaFacebook,
   FaLinkedin,
-  FaWhatsapp,
-  FaEnvelope,
-  FaMapMarkerAlt,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
 
