@@ -1,16 +1,14 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Swiper, SwiperSlide } from 'swiper/react';
 import { FaPhoneAlt, FaEnvelope, FaWhatsapp } from 'react-icons/fa';
-import { Navigation, Pagination, Autoplay } from 'swiper/modules';
-import 'swiper';
-import 'swiper/modules/navigation/navigation.css';
-import 'swiper/modules/pagination/pagination.css';
 import Footer from '../components/Footer';
 import Loading from '../components/Loading';
 import ProdukPrev from './ProdukPrev';
 import ProsesPembelian from '../components/ProseSell';
+import Slider from 'react-slick';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 interface FotoMobil {
   url: string;
@@ -49,7 +47,7 @@ const ProdukDetail: React.FC = () => {
         const fotoArray: FotoMobil[] = Array.isArray(found.foto)
           ? found.foto.map((f: any) => ({
               url: f.url,
-              deskripsi: f.deskripsi || '', // optional
+              deskripsi: f.deskripsi || '',
             }))
           : [];
 
@@ -74,6 +72,17 @@ const ProdukDetail: React.FC = () => {
 
   if (!produk) return <Loading />;
 
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    arrows: true
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-[#beccfc] text-gray-800 font-semibold">
       <div className="w-full max-w-4xl mx-auto px-4 py-6 md:py-10 flex-grow">
@@ -97,33 +106,23 @@ const ProdukDetail: React.FC = () => {
 
         {/* Slider Foto */}
         <div className="rounded-lg overflow-hidden shadow mb-8 bg-white w-full">
-          <Swiper
-            modules={[Navigation, Pagination, Autoplay]}
-            spaceBetween={10}
-            slidesPerView={1}
-            navigation
-            pagination={{ clickable: true }}
-            autoplay={{ delay: 3000 }}
-            className="w-full"
-          >
+          <Slider {...sliderSettings}>
             {produk.foto && produk.foto.length > 0 ? (
               produk.foto.map((img, index) => (
-                <SwiperSlide key={index}>
+                <div key={index}>
                   <img
                     src={img.url}
                     alt={`Foto ${index + 1}`}
                     className="w-full max-h-[300px] sm:max-h-[400px] object-cover"
                   />
-                </SwiperSlide>
+                </div>
               ))
             ) : (
-              <SwiperSlide>
-                <div className="w-full h-[300px] flex items-center justify-center bg-gray-200 text-gray-500 text-center px-4">
-                  Tidak ada foto tersedia
-                </div>
-              </SwiperSlide>
+              <div className="w-full h-[300px] flex items-center justify-center bg-gray-200 text-gray-500 text-center px-4">
+                Tidak ada foto tersedia
+              </div>
             )}
-          </Swiper>
+          </Slider>
         </div>
 
         {/* Tabs */}
@@ -153,7 +152,7 @@ const ProdukDetail: React.FC = () => {
         {/* Tab Content */}
         {tab === 'detail' && (
           <div className="space-y-3 bg-white rounded-xl shadow px-4 py-5 sm:px-6 sm:py-6 mb-10 text-gray-700">
-            <h1 className="text-2xl text-gray-600 ">Spesifikasi Detail</h1>
+            <h1 className="text-2xl text-gray-600">Spesifikasi Detail</h1>
             <p><span className="font-semibold">Tahun:</span> {produk.tahun}</p>
             <p><span className="font-semibold">Spesifikasi:</span> {produk.spesifikasi}</p>
             <p><span className="font-semibold">Keterangan:</span> {produk.keterangan}</p>
@@ -192,9 +191,7 @@ const ProdukDetail: React.FC = () => {
               email@example.com
             </p>
             <button
-              onClick={() =>
-                window.open('https://wa.me/6281234567890', '_blank')
-              }
+              onClick={() => window.open('https://wa.me/6281234567890', '_blank')}
               className="mt-4 w-full bg-white text-[#2c824c] font-medium py-2 px-4 rounded hover:bg-[#25D366] hover:text-white transition flex items-center justify-center gap-2"
             >
               <FaWhatsapp />

@@ -1,11 +1,10 @@
 import { Link } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Swiper, SwiperSlide } from 'swiper/react';
+import Slider from 'react-slick';
 import { FaEye } from 'react-icons/fa';
-import 'swiper';
-import 'swiper/modules/navigation/navigation.css';
-import { Navigation } from 'swiper/modules';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 interface Mobil {
   id: number;
@@ -35,9 +34,9 @@ const ProdukPrev: React.FC = () => {
           'https://api-dealer-car-production.up.railway.app/mobil'
         );
         setProdukPrev(response.data.data);
-        setLoading(false);
-      } catch (error) {
+      } catch {
         setError('Gagal memuat data produk.');
+      } finally {
         setLoading(false);
       }
     };
@@ -63,22 +62,25 @@ const ProdukPrev: React.FC = () => {
     ? produkprev.slice(0, maxDisplay)
     : produkprev;
 
+  const settings = {
+    dots: false,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    arrows: true,
+    responsive: [
+      { breakpoint: 1024, settings: { slidesToShow: 3 } },
+      { breakpoint: 768, settings: { slidesToShow: 2 } },
+      { breakpoint: 640, settings: { slidesToShow: 1 } }
+    ]
+  };
+
   return (
     <div className="rounded-md py-4 px-4">
-      <Swiper
-        spaceBetween={20}
-        slidesPerView={1.2}
-        navigation
-        modules={[Navigation]}
-        breakpoints={{
-          640: { slidesPerView: 2.2 },
-          768: { slidesPerView: 3.2 },
-          1024: { slidesPerView: 4.2 },
-        }}
-        className="text-black font-medium"
-      >
+      <Slider {...settings}>
         {mobilTampil.map((item) => (
-          <SwiperSlide key={item.id}>
+          <div key={item.id} className="p-2">
             <div className="relative border rounded p-2 bg-white shadow-md w-full text-sm">
               <div className="absolute top-2 left-2 bg-[#5b6aa9] text-white text-xs font-bold px-2 py-1 rounded-md shadow">
                 {item.status}
@@ -125,34 +127,29 @@ const ProdukPrev: React.FC = () => {
                 </a>
               </div>
             </div>
-          </SwiperSlide>
+          </div>
         ))}
 
         {/* Card "Lihat Lebih Banyak" */}
         {tampilkanLebihBanyak && (
-          <SwiperSlide>
+          <div className="p-2">
             <Link
               to="/list-produk"
               className="relative border rounded p-2 bg-[#626c95] shadow-md w-full text-sm flex flex-col justify-between h-full text-[#35467e] hover:shadow-lg transition"
             >
-              {/* Simulasi gambar */}
               <div className="w-full aspect-[4/3] mb-2 rounded flex items-center justify-center">
                 <FaEye className="text-3xl text-[#f3f4f7]" />
               </div>
-
-              {/* Konten */}
               <div className="text-center">
                 <h3 className="font-semibold text-sm sm:text-base text-white">
                   Lihat Lebih Banyak
                 </h3>
               </div>
-
-              {/* Spacer agar sejajar dengan tombol produk */}
               <div className="h-24"></div>
             </Link>
-          </SwiperSlide>
+          </div>
         )}
-      </Swiper>
+      </Slider>
     </div>
   );
 };

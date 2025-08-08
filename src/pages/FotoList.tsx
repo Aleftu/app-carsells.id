@@ -135,7 +135,7 @@ const FotoList: React.FC = () => {
       fetchFoto();
     } catch (error: any) {
       console.error(
-        '❌ Error saat simpan:',
+        'Error saat simpan:',
         error.response?.data || error.message
       );
       toast.error('Gagal menyimpan data.');
