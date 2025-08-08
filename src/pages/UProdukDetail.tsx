@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { FaPhoneAlt, FaEnvelope, FaWhatsapp } from 'react-icons/fa';
 import Footer from '../components/Footer';
@@ -30,6 +30,7 @@ interface ProdukDetailView {
 const ProdukDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const sliderRef = useRef<Slider>(null);
 
   const [produk, setProduk] = useState<ProdukDetailView | null>(null);
   const [tab, setTab] = useState<'detail' | 'inspeksi'>('detail');
@@ -70,17 +71,26 @@ const ProdukDetail: React.FC = () => {
       });
   }, [id]);
 
+  useEffect(() => {
+    if (produk?.foto?.length) {
+      sliderRef.current?.slickGoTo(0);
+    }
+  }, [produk]);
+
   if (!produk) return <Loading />;
 
   const sliderSettings = {
     dots: true,
-    infinite: true,
+    infinite: true, // tetap looping
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 3000,
-    arrows: true
+    arrows: true,
+    adaptiveHeight: true,
+    accessibility: true,
+    focusOnSelect: false
   };
 
   return (
@@ -106,23 +116,23 @@ const ProdukDetail: React.FC = () => {
 
         {/* Slider Foto */}
         <div className="rounded-lg overflow-hidden shadow mb-8 bg-white w-full">
-          <Slider {...sliderSettings}>
-            {produk.foto && produk.foto.length > 0 ? (
-              produk.foto.map((img, index) => (
-                <div key={index}>
+          {produk.foto && produk.foto.length > 0 ? (
+            <Slider ref={sliderRef} {...sliderSettings}>
+              {produk.foto.map((img, index) => (
+                <div key={index} className="w-full outline-none" tabIndex={-1}>
                   <img
                     src={img.url}
                     alt={`Foto ${index + 1}`}
-                    className="w-full max-h-[300px] sm:max-h-[400px] object-cover"
+                    className="w-full max-h-[400px] object-cover pointer-events-none"
                   />
                 </div>
-              ))
-            ) : (
-              <div className="w-full h-[300px] flex items-center justify-center bg-gray-200 text-gray-500 text-center px-4">
-                Tidak ada foto tersedia
-              </div>
-            )}
-          </Slider>
+              ))}
+            </Slider>
+          ) : (
+            <div className="w-full h-[300px] flex items-center justify-center bg-gray-200 text-gray-500 text-center px-4">
+              Tidak ada foto tersedia
+            </div>
+          )}
         </div>
 
         {/* Tabs */}

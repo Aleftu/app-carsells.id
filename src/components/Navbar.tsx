@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [scroll, setScroll] = useState(false);
@@ -36,24 +37,36 @@ const Navbar = () => {
             tabIndex={0}
             className="menu menu-md dropdown-content mt-3 z-[1] p-2 shadow-md bg-slate-300 text-black rounded-box w-52 hover:bg-[#6a79bd] hover:text-white"
           >
-            <li><a href="/">Beranda</a></li>
-            <li><button onClick={scrollToProduk}>Produk</button></li>
-            <li><a href="/kontak">Kontak</a></li>
+            <li>
+              <Link to="/">Beranda</Link>
+            </li>
+            <li>
+              <button onClick={scrollToProduk}>Produk</button>
+            </li>
+            <li>
+              <Link to="/kontak">Kontak</Link>
+            </li>
           </ul>
         </div>
-        <a
-          href="/"
+        <Link
+          to="/"
           className="mx-5 text-xl font-extrabold first-letter:text-[#567af3] first-letter:text-3xl"
         >
           45Motor
-        </a>
+        </Link>
       </div>
 
       <div className="navbar-end hidden lg:flex">
         <ul className="menu menu-horizontal px-1 text-xl">
-          <li><a href="/">Beranda</a></li>
-          <li><button onClick={scrollToProduk}>Produk</button></li>
-          <li><a href="/kontak">Kontak</a></li>
+          <li>
+            <Link to="/">Beranda</Link>
+          </li>
+          <li>
+            <button onClick={scrollToProduk}>Produk</button>
+          </li>
+          <li>
+            <Link to="/kontak">Kontak</Link>
+          </li>
         </ul>
       </div>
     </div>
