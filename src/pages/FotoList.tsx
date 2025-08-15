@@ -159,7 +159,7 @@ const FotoList: React.FC = () => {
   const handleDeleteConfirmed = async () => {
     const token = localStorage.getItem('token');
     if (!token || !confirmDeleteId) return;
-setLoadingDelete(true);
+    setLoadingDelete(true);
     try {
       await axios.delete(
         `https://api-dealer-car-production.up.railway.app/foto/${confirmDeleteId}`, //aku gak tau end poinnya benr atau slah(kamu bisa ganti disini kalo aku slh)
@@ -277,13 +277,12 @@ setLoadingDelete(true);
                 Batal
               </button>
               <button
-  onClick={handleDeleteConfirmed}
-  disabled={loadingDelete}
-  className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 disabled:opacity-50"
->
-  {loadingDelete ? 'Menghapus...' : 'Hapus'}
-</button>
-
+                onClick={handleDeleteConfirmed}
+                disabled={loadingDelete}
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 disabled:opacity-50"
+              >
+                {loadingDelete ? 'Menghapus...' : 'Hapus'}
+              </button>
             </div>
           </div>
         </div>
@@ -291,7 +290,7 @@ setLoadingDelete(true);
 
       {/* Tabel Foto */}
       <div className="overflow-x-auto mt-6">
-        <table className="min-w-full bg-white text-black text-sm sm:text-base border-collapse">
+        <table className="min-w-full bg-white/30 backdrop-blur-md text-black rounded-lg overflow-hidden">
           <thead className="bg-[#5266a9] text-white">
             <tr>
               <th className="p-2 whitespace-nowrap">No</th>

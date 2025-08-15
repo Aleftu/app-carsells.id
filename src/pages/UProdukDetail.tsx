@@ -1,14 +1,12 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, Suspense, lazy } from 'react';
 import axios from 'axios';
-import { FaPhoneAlt, FaEnvelope, FaWhatsapp } from 'react-icons/fa';
+import { FaPhoneAlt, FaEnvelope, FaWhatsapp, FaArrowLeft } from 'react-icons/fa';
 import Footer from '../components/Footer';
 import Loading from '../components/Loading';
-import ProdukPrev from './ProdukPrev';
 import ProsesPembelian from '../components/ProseSell';
-import Slider from 'react-slick';
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+
+const Slider = lazy(() => import('react-slick')); // lazy load slider
 
 interface FotoMobil {
   url: string;
@@ -30,7 +28,6 @@ interface ProdukDetailView {
 const ProdukDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const sliderRef = useRef<Slider>(null);
 
   const [produk, setProduk] = useState<ProdukDetailView | null>(null);
   const [tab, setTab] = useState<'detail' | 'inspeksi'>('detail');
@@ -39,7 +36,7 @@ const ProdukDetail: React.FC = () => {
     axios
       .get(`https://api-dealer-car-production.up.railway.app/mobil/${id}`)
       .then((res) => {
-        const found = res.data.data.find((item: any) => item.id === Number(id));
+        const found = res.data.data; // langsung ambil objek
         if (!found) {
           console.error(`Produk dengan id ${id} tidak ditemukan.`);
           return;
@@ -52,36 +49,16 @@ const ProdukDetail: React.FC = () => {
             }))
           : [];
 
-        const produkBaru: ProdukDetailView = {
-          id: found.id,
-          merek: found.merek,
-          tipe: found.tipe,
-          harga: found.harga,
-          tahun: found.tahun,
-          spesifikasi: found.spesifikasi,
-          keterangan: found.keterangan,
-          status: found.status,
-          foto: fotoArray,
-        };
-
-        setProduk(produkBaru);
+        setProduk({ ...found, foto: fotoArray });
       })
-      .catch((err) => {
-        console.error('Gagal mengambil detail produk:', err);
-      });
+      .catch((err) => console.error('Gagal mengambil detail produk:', err));
   }, [id]);
-
-  useEffect(() => {
-    if (produk?.foto?.length) {
-      sliderRef.current?.slickGoTo(0);
-    }
-  }, [produk]);
 
   if (!produk) return <Loading />;
 
   const sliderSettings = {
     dots: true,
-    infinite: true, // tetap looping
+    infinite: true,
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
@@ -89,8 +66,6 @@ const ProdukDetail: React.FC = () => {
     autoplaySpeed: 3000,
     arrows: true,
     adaptiveHeight: true,
-    accessibility: true,
-    focusOnSelect: false
   };
 
   return (
@@ -99,15 +74,12 @@ const ProdukDetail: React.FC = () => {
 
         {/* Tombol Kembali */}
         <button
-          onClick={() => navigate('/')}
-          className="mb-4 px-4 py-2 text-[#35467e] rounded hover:text-white transition flex items-center gap-2 group"
-        >
-          <span className="w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center bg-[#35467e] text-white rounded-full text-sm sm:text-base font-bold transition">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="2" fill="none" />
-            </svg>
-          </span>
-        </button>
+                onClick={() => navigate('/')}
+                className="absolute top-4 left-4 flex items-center gap-2 text-white hover:text-gray-200 text-sm"
+              >
+                <FaArrowLeft className="h-4 w-4" />
+                Kembali ke Beranda
+              </button>
 
         {/* Judul */}
         <h2 className="text-2xl md:text-3xl font-bold text-[#35467e] mb-6 text-center">
@@ -116,20 +88,23 @@ const ProdukDetail: React.FC = () => {
 
         {/* Slider Foto */}
         <div className="rounded-lg overflow-hidden shadow mb-8 bg-white w-full">
-          {produk.foto && produk.foto.length > 0 ? (
-            <Slider ref={sliderRef} {...sliderSettings}>
-              {produk.foto.map((img, index) => (
-                <div key={index} className="w-full outline-none" tabIndex={-1}>
-                  <img
-                    src={img.url}
-                    alt={`Foto ${index + 1}`}
-                    className="w-full max-h-[400px] object-cover pointer-events-none"
-                  />
-                </div>
-              ))}
-            </Slider>
+          {produk.foto.length > 0 ? (
+            <Suspense fallback={<div className="h-[300px] flex items-center justify-center">Loading slider...</div>}>
+              <Slider {...sliderSettings}>
+                {produk.foto.map((img, index) => (
+                  <div key={index} className="w-full outline-none">
+                    <img
+                      src={img.url}
+                      alt={`Foto ${index + 1}`}
+                      className="w-full max-h-[400px] object-cover pointer-events-none"
+                      loading="lazy"
+                    />
+                  </div>
+                ))}
+              </Slider>
+            </Suspense>
           ) : (
-            <div className="w-full h-[300px] flex items-center justify-center bg-gray-200 text-gray-500 text-center px-4">
+            <div className="w-full h-[300px] flex items-center justify-center bg-gray-200 text-gray-500">
               Tidak ada foto tersedia
             </div>
           )}
@@ -140,9 +115,7 @@ const ProdukDetail: React.FC = () => {
           <button
             onClick={() => setTab('detail')}
             className={`px-4 py-2 rounded-t-md font-semibold ${
-              tab === 'detail'
-                ? 'bg-white text-[#35467e] shadow'
-                : 'bg-[#d1d5db] text-gray-500'
+              tab === 'detail' ? 'bg-white text-[#35467e] shadow' : 'bg-[#d1d5db] text-gray-500'
             }`}
           >
             Detail Mobil
@@ -150,9 +123,7 @@ const ProdukDetail: React.FC = () => {
           <button
             onClick={() => setTab('inspeksi')}
             className={`px-4 py-2 rounded-t-md font-semibold ${
-              tab === 'inspeksi'
-                ? 'bg-white text-[#35467e] shadow'
-                : 'bg-[#d1d5db] text-gray-500'
+              tab === 'inspeksi' ? 'bg-white text-[#35467e] shadow' : 'bg-[#d1d5db] text-gray-500'
             }`}
           >
             Deskripsi Foto
@@ -161,7 +132,7 @@ const ProdukDetail: React.FC = () => {
 
         {/* Tab Content */}
         {tab === 'detail' && (
-          <div className="space-y-3 bg-white rounded-xl shadow px-4 py-5 sm:px-6 sm:py-6 mb-10 text-gray-700">
+          <div className="space-y-3 bg-white rounded-xl shadow px-4 py-5 mb-10 text-gray-700">
             <h1 className="text-2xl text-gray-600">Spesifikasi Detail</h1>
             <p><span className="font-semibold">Tahun:</span> {produk.tahun}</p>
             <p><span className="font-semibold">Spesifikasi:</span> {produk.spesifikasi}</p>
@@ -192,20 +163,13 @@ const ProdukDetail: React.FC = () => {
         <div className="flex justify-center items-center">
           <div className="w-full max-w-sm space-y-4 bg-[#808dc4] shadow-md rounded-md px-4 py-5 text-white text-sm">
             <h1 className="text-xl">Kontak penjual</h1>
-            <span className="flex items-center gap-2">
-              <FaPhoneAlt />
-              Hubungi Penjual
-            </span>
-            <p className="flex items-center gap-2">
-              <FaEnvelope />
-              email@example.com
-            </p>
+            <span className="flex items-center gap-2"><FaPhoneAlt /> Hubungi Penjual</span>
+            <p className="flex items-center gap-2"><FaEnvelope /> email@example.com</p>
             <button
               onClick={() => window.open('https://wa.me/6281234567890', '_blank')}
-              className="mt-4 w-full bg-white text-[#2c824c] font-medium py-2 px-4 rounded hover:bg-[#25D366] hover:text-white transition flex items-center justify-center gap-2"
+              className="mt-4 w-full bg-white text-[#2c824c] font-medium py-2 px-4 rounded hover:bg-[#25D366] hover:text-white flex items-center justify-center gap-2"
             >
-              <FaWhatsapp />
-              Hubungi via WhatsApp
+              <FaWhatsapp /> Hubungi via WhatsApp
             </button>
           </div>
         </div>
@@ -213,14 +177,6 @@ const ProdukDetail: React.FC = () => {
 
       {/* Proses Pembelian */}
       <ProsesPembelian />
-
-      {/* Produk Lain */}
-      <h1 className="text-center text-2xl text-[#35467e] font-bold my-5">
-        Produk lain mungkin anda suka
-      </h1>
-      <div className="mb-10">
-        <ProdukPrev />
-      </div>
 
       {/* Footer */}
       <Footer />

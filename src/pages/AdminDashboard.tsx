@@ -48,7 +48,7 @@ const AdminDashboard: React.FC = () => {
 
   const fetchMobil = async () => {
     try {
-      const token = localStorage.getItem('token');
+     const token = sessionStorage.getItem('token');
       if (!token) {
         toast.error('Token tidak ditemukan. Silakan login ulang.');
         return;
@@ -100,14 +100,14 @@ const AdminDashboard: React.FC = () => {
       !status
     ) {
       toast.error('Semua field harus diisi!');
-      setLoading(false); // <- Tambah ini
+      setLoading(false); 
       return;
     }
 
     const token = localStorage.getItem('token');
     if (!token) {
       toast.error('Token tidak ditemukan. Silakan login ulang.');
-      setLoading(false); // <- Tambah ini
+      setLoading(false); 
       return;
     }
 
@@ -229,7 +229,7 @@ const AdminDashboard: React.FC = () => {
   const totalPages = Math.ceil(dataMobil.length / itemsPerPage);
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-[#8d9bd1] font-semibold">
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#66739f] font-semibold backdrop-blur-md">
       <div className="md:w-64 w-full ">
         <Sidebar
           onSelectMenu={(menu: 'produk' | 'foto') => setActiveMenu(menu)}
@@ -286,7 +286,7 @@ const AdminDashboard: React.FC = () => {
               </div>
 
               <div className="mt-6 overflow-x-auto font-semibold">
-                <table className="min-w-full bg-white text-black">
+                <table className="min-w-full bg-white/30 backdrop-blur-md text-black rounded-lg overflow-hidden">
                   <thead className="bg-[#5266a9] text-white">
                     <tr>
                       <th className="p-2">No</th>
@@ -314,7 +314,7 @@ const AdminDashboard: React.FC = () => {
                               className="w-20 h-16 object-cover rounded"
                             />
                           ) : (
-                            <span className="text-gray-400">Belum ada</span>
+                            <span className="text-gray-800">Belum ada</span>
                           )}
                         </td>
                         <td className="p-2">{item.merk}</td>

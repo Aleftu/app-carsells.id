@@ -43,7 +43,7 @@ const ProdukDetail: React.FC = () => {
     axios
       .get(`https://api-dealer-car-production.up.railway.app/mobil/${id}`)
       .then((res) => {
-        const found = res.data.data.find((item: any) => item.id === Number(id));
+        const found = res.data.data;
         if (!found) {
           console.error(`Produk dengan id ${id} tidak ditemukan.`);
           return;
