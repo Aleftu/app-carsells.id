@@ -9,7 +9,7 @@ import {
   FaChevronLeft,
   FaChevronRight,
 } from 'react-icons/fa';
-import Slider, { Settings } from 'react-slick';
+import Slider from 'react-slick'; 
 import Footer from '../components/Footer';
 import Loading from '../components/Loading';
 import ProdukPrev from './ProdukPrev';
@@ -93,7 +93,7 @@ const ProdukDetail: React.FC = () => {
   if (!produk) return <Loading />;
 
   // 🔹 Konfigurasi slider utama
-  const mainSettings: Settings = {
+  const mainSettings = {
     dots: false,
     infinite: true,
     speed: 600,
@@ -106,17 +106,15 @@ const ProdukDetail: React.FC = () => {
     prevArrow: <PrevArrow />,
     adaptiveHeight: true,
     asNavFor: thumbSlider,
-    ref: (slider: any) => setMainSlider(slider),
   };
 
   // 🔹 Konfigurasi slider thumbnail
-  const thumbSettings: Settings = {
+  const thumbSettings = {
     slidesToShow: Math.min(produk.foto.length, 5),
     swipeToSlide: true,
     focusOnSelect: true,
     arrows: false,
     asNavFor: mainSlider,
-    ref: (slider: any) => setThumbSlider(slider),
   };
 
   return (
@@ -125,7 +123,7 @@ const ProdukDetail: React.FC = () => {
         {/*  Tombol Kembali */}
         <button
           onClick={() => navigate('/')}
-          className="mb-4 flex items-center gap-2 text-[#35467e] hover:text-[#22315d] font-medium mb-4"
+          className="flex items-center gap-2 text-[#35467e] hover:text-[#22315d] font-medium mb-4" // ✅ hapus mb-4 duplikat
         >
           <FaArrowLeft className="h-4 w-4" />
           Kembali ke Beranda
@@ -141,7 +139,7 @@ const ProdukDetail: React.FC = () => {
           {produk.foto.length > 0 ? (
             <>
               {/* Main Slider */}
-              <Slider {...mainSettings}>
+              <Slider {...mainSettings} ref={setMainSlider}>
                 {produk.foto.map((img, index) => (
                   <div key={index}>
                     <img
@@ -156,7 +154,7 @@ const ProdukDetail: React.FC = () => {
 
               {/* Thumbnail Slider */}
               <div className="mt-3">
-                <Slider {...thumbSettings}>
+                <Slider {...thumbSettings} ref={setThumbSlider}>
                   {produk.foto.map((img, index) => (
                     <div key={index} className="px-1">
                       <img
