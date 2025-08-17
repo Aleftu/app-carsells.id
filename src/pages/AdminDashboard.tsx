@@ -48,7 +48,7 @@ const AdminDashboard: React.FC = () => {
 
   const fetchMobil = async () => {
     try {
-     const token = sessionStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       if (!token) {
         toast.error('Token tidak ditemukan. Silakan login ulang.');
         return;
@@ -74,16 +74,15 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
- const handleChange = (
-  e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-) => {
-  const { name, value } = e.target;
-  setForm((prevForm) => ({
-    ...prevForm,
-    [name]: name === 'harga' ? parseInt(value) : value,
-  }));
-};
-
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setForm((prevForm) => ({
+      ...prevForm,
+      [name]: name === 'harga' ? parseInt(value) : value,
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,14 +99,14 @@ const AdminDashboard: React.FC = () => {
       !status
     ) {
       toast.error('Semua field harus diisi!');
-      setLoading(false); 
+      setLoading(false);
       return;
     }
 
     const token = sessionStorage.getItem('token');
     if (!token) {
       toast.error('Token tidak ditemukan. Silakan login ulang.');
-      setLoading(false); 
+      setLoading(false);
       return;
     }
 

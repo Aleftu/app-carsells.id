@@ -13,6 +13,7 @@ import Slider, { Settings } from 'react-slick';
 import Footer from '../components/Footer';
 import Loading from '../components/Loading';
 import ProdukPrev from './ProdukPrev';
+import ProsesPembelian from '../components/ProseSell';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
@@ -121,7 +122,6 @@ const ProdukDetail: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-[#beccfc] text-gray-800 font-semibold">
       <div className="w-full max-w-4xl mx-auto px-4 py-6 md:py-10 flex-grow">
-
         {/*  Tombol Kembali */}
         <button
           onClick={() => navigate('/')}
@@ -204,21 +204,36 @@ const ProdukDetail: React.FC = () => {
         {tab === 'detail' && (
           <div className="space-y-3 bg-white rounded-xl shadow px-4 py-5 mb-10 text-gray-700">
             <h1 className="text-2xl text-gray-600">Spesifikasi Detail</h1>
-            <p><span className="font-semibold">Tahun:</span> {produk.tahun}</p>
-            <p><span className="font-semibold">Spesifikasi:</span> {produk.spesifikasi}</p>
-            <p><span className="font-semibold">Keterangan:</span> {produk.keterangan}</p>
-            <p><span className="font-semibold">Status:</span> {produk.status}</p>
+            <p>
+              <span className="font-semibold">Tahun:</span> {produk.tahun}
+            </p>
+            <p>
+              <span className="font-semibold">Spesifikasi:</span>{' '}
+              {produk.spesifikasi}
+            </p>
+            <p>
+              <span className="font-semibold">Keterangan:</span>{' '}
+              {produk.keterangan}
+            </p>
+            <p>
+              <span className="font-semibold">Status:</span> {produk.status}
+            </p>
             <p className="text-lg font-bold text-[#fb923c]">
-              Harga: Rp {new Intl.NumberFormat('id-ID').format(Number(produk.harga))}
+              Harga: Rp{' '}
+              {new Intl.NumberFormat('id-ID').format(Number(produk.harga))}
             </p>
           </div>
         )}
 
         {tab === 'inspeksi' && (
           <div className="bg-white rounded-xl shadow px-4 py-6 mb-10 text-gray-700">
-            <h1 className="text-xl font-semibold mb-4 text-[#35467e]">Deskripsi Foto</h1>
+            <h1 className="text-xl font-semibold mb-4 text-[#35467e]">
+              Deskripsi Foto
+            </h1>
             {produk.foto.length === 0 ? (
-              <p className="text-sm text-gray-500">Belum ada Deskripsi Foto untuk mobil ini.</p>
+              <p className="text-sm text-gray-500">
+                Belum ada Deskripsi Foto untuk mobil ini.
+              </p>
             ) : (
               <ul className="list-disc pl-6 space-y-2 text-sm">
                 {produk.foto.map((foto, idx) => (
@@ -233,10 +248,16 @@ const ProdukDetail: React.FC = () => {
         <div className="flex justify-center items-center mb-8">
           <div className="w-full max-w-sm space-y-4 bg-[#808dc4] shadow-md rounded-md px-4 py-5 text-white text-sm">
             <h1 className="text-xl">Kontak penjual</h1>
-            <span className="flex items-center gap-2"><FaPhoneAlt /> Hubungi Penjual</span>
-            <p className="flex items-center gap-2"><FaEnvelope /> email@example.com</p>
+            <span className="flex items-center gap-2">
+              <FaPhoneAlt /> Hubungi Penjual
+            </span>
+            <p className="flex items-center gap-2">
+              <FaEnvelope /> email@example.com
+            </p>
             <button
-              onClick={() => window.open('https://wa.me/6281234567890', '_blank')}
+              onClick={() =>
+                window.open('https://wa.me/6281234567890', '_blank')
+              }
               className="mt-4 w-full bg-white text-[#2c824c] font-medium py-2 px-4 rounded hover:bg-[#25D366] hover:text-white flex items-center justify-center gap-2"
             >
               <FaWhatsapp /> Hubungi via WhatsApp
@@ -244,9 +265,16 @@ const ProdukDetail: React.FC = () => {
           </div>
         </div>
 
+        {/* {Proses sell} */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <ProsesPembelian />
+        </div>
+
         {/*  Rekomendasi Produk */}
         <div className="bg-white rounded-xl shadow px-4 py-6 mb-10">
-          <h1 className="text-xl font-semibold mb-4 text-[#35467e]">Rekomendasi Mobil Lain</h1>
+          <h1 className="text-xl font-semibold mb-4 text-[#35467e]">
+            Rekomendasi Mobil Lain
+          </h1>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <ProdukPrev />
           </div>
