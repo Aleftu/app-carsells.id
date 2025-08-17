@@ -1,12 +1,20 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import React, { useEffect, useState, Suspense, lazy } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaPhoneAlt, FaEnvelope, FaWhatsapp, FaArrowLeft } from 'react-icons/fa';
+import {
+  FaPhoneAlt,
+  FaEnvelope,
+  FaWhatsapp,
+  FaArrowLeft,
+  FaChevronLeft,
+  FaChevronRight,
+} from 'react-icons/fa';
+import Slider, { Settings } from 'react-slick';
 import Footer from '../components/Footer';
 import Loading from '../components/Loading';
-import ProsesPembelian from '../components/ProseSell';
-
-const Slider = lazy(() => import('react-slick')); // lazy load slider
+import ProdukPrev from './ProdukPrev';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 interface FotoMobil {
   url: string;
@@ -25,6 +33,31 @@ interface ProdukDetailView {
   foto: FotoMobil[];
 }
 
+// 🔹 Custom Arrow
+const NextArrow = (props: any) => {
+  const { onClick } = props;
+  return (
+    <button
+      onClick={onClick}
+      className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#35467e] text-white p-2 rounded-full shadow hover:bg-[#22315d] z-10"
+    >
+      <FaChevronRight />
+    </button>
+  );
+};
+
+const PrevArrow = (props: any) => {
+  const { onClick } = props;
+  return (
+    <button
+      onClick={onClick}
+      className="absolute left-2 top-1/2 -translate-y-1/2 bg-[#35467e] text-white p-2 rounded-full shadow hover:bg-[#22315d] z-10"
+    >
+      <FaChevronLeft />
+    </button>
+  );
+};
+
 const ProdukDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -32,15 +65,17 @@ const ProdukDetail: React.FC = () => {
   const [produk, setProduk] = useState<ProdukDetailView | null>(null);
   const [tab, setTab] = useState<'detail' | 'inspeksi'>('detail');
 
+  // 🔹 Slider refs untuk sinkronisasi
+  const [mainSlider, setMainSlider] = useState<any>(null);
+  const [thumbSlider, setThumbSlider] = useState<any>(null);
+
+  // 🔹 Fetch data produk
   useEffect(() => {
     axios
       .get(`https://api-dealer-car-production.up.railway.app/mobil/${id}`)
       .then((res) => {
-        const found = res.data.data; // langsung ambil objek
-        if (!found) {
-          console.error(`Produk dengan id ${id} tidak ditemukan.`);
-          return;
-        }
+        const found = res.data.data;
+        if (!found) return;
 
         const fotoArray: FotoMobil[] = Array.isArray(found.foto)
           ? found.foto.map((f: any) => ({
@@ -56,53 +91,84 @@ const ProdukDetail: React.FC = () => {
 
   if (!produk) return <Loading />;
 
-  const sliderSettings = {
-    dots: true,
+  // 🔹 Konfigurasi slider utama
+  const mainSettings: Settings = {
+    dots: false,
     infinite: true,
-    speed: 500,
+    speed: 600,
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 3000,
+    autoplaySpeed: 4000,
     arrows: true,
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
     adaptiveHeight: true,
+    asNavFor: thumbSlider,
+    ref: (slider: any) => setMainSlider(slider),
+  };
+
+  // 🔹 Konfigurasi slider thumbnail
+  const thumbSettings: Settings = {
+    slidesToShow: Math.min(produk.foto.length, 5),
+    swipeToSlide: true,
+    focusOnSelect: true,
+    arrows: false,
+    asNavFor: mainSlider,
+    ref: (slider: any) => setThumbSlider(slider),
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-[#beccfc] text-gray-800 font-semibold">
       <div className="w-full max-w-4xl mx-auto px-4 py-6 md:py-10 flex-grow">
 
-        {/* Tombol Kembali */}
+        {/*  Tombol Kembali */}
         <button
-                onClick={() => navigate('/')}
-                className="absolute top-4 left-4 flex items-center gap-2 text-white hover:text-gray-200 text-sm"
-              >
-                <FaArrowLeft className="h-4 w-4" />
-                Kembali ke Beranda
-              </button>
+          onClick={() => navigate('/')}
+          className="mb-4 flex items-center gap-2 text-[#35467e] hover:text-[#22315d] font-medium mb-4"
+        >
+          <FaArrowLeft className="h-4 w-4" />
+          Kembali ke Beranda
+        </button>
 
-        {/* Judul */}
+        {/*  Judul */}
         <h2 className="text-2xl md:text-3xl font-bold text-[#35467e] mb-6 text-center">
           {produk.merek} {produk.tipe}
         </h2>
 
-        {/* Slider Foto */}
-        <div className="rounded-lg overflow-hidden shadow mb-8 bg-white w-full">
+        {/*  Slider Foto */}
+        <div className="relative rounded-lg overflow-hidden shadow mb-4 bg-white w-full">
           {produk.foto.length > 0 ? (
-            <Suspense fallback={<div className="h-[300px] flex items-center justify-center">Loading slider...</div>}>
-              <Slider {...sliderSettings}>
+            <>
+              {/* Main Slider */}
+              <Slider {...mainSettings}>
                 {produk.foto.map((img, index) => (
-                  <div key={index} className="w-full outline-none">
+                  <div key={index}>
                     <img
                       src={img.url}
                       alt={`Foto ${index + 1}`}
-                      className="w-full max-h-[400px] object-cover pointer-events-none"
+                      className="w-full max-h-[400px] object-cover"
                       loading="lazy"
                     />
                   </div>
                 ))}
               </Slider>
-            </Suspense>
+
+              {/* Thumbnail Slider */}
+              <div className="mt-3">
+                <Slider {...thumbSettings}>
+                  {produk.foto.map((img, index) => (
+                    <div key={index} className="px-1">
+                      <img
+                        src={img.url}
+                        alt={`Thumb ${index + 1}`}
+                        className="h-20 w-full object-cover rounded cursor-pointer border-2 border-transparent hover:border-[#35467e]"
+                      />
+                    </div>
+                  ))}
+                </Slider>
+              </div>
+            </>
           ) : (
             <div className="w-full h-[300px] flex items-center justify-center bg-gray-200 text-gray-500">
               Tidak ada foto tersedia
@@ -110,12 +176,14 @@ const ProdukDetail: React.FC = () => {
           )}
         </div>
 
-        {/* Tabs */}
+        {/*  Tabs */}
         <div className="flex justify-center gap-4 mb-6">
           <button
             onClick={() => setTab('detail')}
             className={`px-4 py-2 rounded-t-md font-semibold ${
-              tab === 'detail' ? 'bg-white text-[#35467e] shadow' : 'bg-[#d1d5db] text-gray-500'
+              tab === 'detail'
+                ? 'bg-white text-[#35467e] shadow'
+                : 'bg-[#d1d5db] text-gray-500'
             }`}
           >
             Detail Mobil
@@ -123,7 +191,9 @@ const ProdukDetail: React.FC = () => {
           <button
             onClick={() => setTab('inspeksi')}
             className={`px-4 py-2 rounded-t-md font-semibold ${
-              tab === 'inspeksi' ? 'bg-white text-[#35467e] shadow' : 'bg-[#d1d5db] text-gray-500'
+              tab === 'inspeksi'
+                ? 'bg-white text-[#35467e] shadow'
+                : 'bg-[#d1d5db] text-gray-500'
             }`}
           >
             Deskripsi Foto
@@ -159,8 +229,8 @@ const ProdukDetail: React.FC = () => {
           </div>
         )}
 
-        {/* Kontak Penjual */}
-        <div className="flex justify-center items-center">
+        {/*  Kontak Penjual */}
+        <div className="flex justify-center items-center mb-8">
           <div className="w-full max-w-sm space-y-4 bg-[#808dc4] shadow-md rounded-md px-4 py-5 text-white text-sm">
             <h1 className="text-xl">Kontak penjual</h1>
             <span className="flex items-center gap-2"><FaPhoneAlt /> Hubungi Penjual</span>
@@ -173,13 +243,17 @@ const ProdukDetail: React.FC = () => {
             </button>
           </div>
         </div>
+
+        {/*  Rekomendasi Produk */}
+        <div className="bg-white rounded-xl shadow px-4 py-6 mb-10">
+          <h1 className="text-xl font-semibold mb-4 text-[#35467e]">Rekomendasi Mobil Lain</h1>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <ProdukPrev />
+          </div>
+        </div>
+
+        <Footer />
       </div>
-
-      {/* Proses Pembelian */}
-      <ProsesPembelian />
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 };

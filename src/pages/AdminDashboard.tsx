@@ -104,7 +104,7 @@ const AdminDashboard: React.FC = () => {
       return;
     }
 
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (!token) {
       toast.error('Token tidak ditemukan. Silakan login ulang.');
       setLoading(false); 
@@ -182,7 +182,7 @@ const AdminDashboard: React.FC = () => {
       return;
     }
 
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (!token) {
       toast.error('Token tidak ditemukan. Silakan login ulang.');
       return;
@@ -500,7 +500,7 @@ const AdminDashboard: React.FC = () => {
                     formData.append('foto', foto);
                     formData.append('deskripsi', deskripsi);
                     try {
-                      const token = localStorage.getItem('token');
+                      const token = sessionStorage.getItem('token');
                       if (!token) {
                         toast.error(
                           'Token tidak ditemukan. Silakan login ulang.'

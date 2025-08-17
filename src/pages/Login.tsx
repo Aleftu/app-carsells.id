@@ -71,7 +71,7 @@ export default function Login() {
 
       {/* Konten Tengah */}
       <div className="w-full max-w-md">
-        <h1 className="text-white text-xl font-mono mb-4 text-center">
+        <h1 className="text-white text-xl font-semibold my-14 mb-2 text-center">
           Selamat datang Admin!
         </h1>
 
