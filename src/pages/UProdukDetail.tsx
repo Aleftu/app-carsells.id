@@ -8,14 +8,16 @@ import {
   FaArrowLeft,
   FaChevronLeft,
   FaChevronRight,
+  FaArrowUp,
 } from 'react-icons/fa';
-import Slider from 'react-slick'; 
+import Slider from 'react-slick';
 import Footer from '../components/Footer';
-import Loading from '../components/Loading';
-import ProdukPrev from './ProdukPrev';
 import ProsesPembelian from '../components/ProseSell';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+
+// 🔹 Lazy load ProdukPrev
+const ProdukPrev = React.lazy(() => import('./ProdukPrev'));
 
 interface FotoMobil {
   url: string;
@@ -24,7 +26,7 @@ interface FotoMobil {
 
 interface ProdukDetailView {
   id: number;
-  merek: string;
+  merk: string;
   tipe: string;
   harga: string | number;
   tahun: string | number;
@@ -35,29 +37,23 @@ interface ProdukDetailView {
 }
 
 // 🔹 Custom Arrow
-const NextArrow = (props: any) => {
-  const { onClick } = props;
-  return (
-    <button
-      onClick={onClick}
-      className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#35467e] text-white p-2 rounded-full shadow hover:bg-[#22315d] z-10"
-    >
-      <FaChevronRight />
-    </button>
-  );
-};
+const NextArrow = (props: any) => (
+  <button
+    onClick={props.onClick}
+    className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#35467e] text-white p-2 rounded-full shadow hover:bg-[#22315d] z-10"
+  >
+    <FaChevronRight />
+  </button>
+);
 
-const PrevArrow = (props: any) => {
-  const { onClick } = props;
-  return (
-    <button
-      onClick={onClick}
-      className="absolute left-2 top-1/2 -translate-y-1/2 bg-[#35467e] text-white p-2 rounded-full shadow hover:bg-[#22315d] z-10"
-    >
-      <FaChevronLeft />
-    </button>
-  );
-};
+const PrevArrow = (props: any) => (
+  <button
+    onClick={props.onClick}
+    className="absolute left-2 top-1/2 -translate-y-1/2 bg-[#35467e] text-white p-2 rounded-full shadow hover:bg-[#22315d] z-10"
+  >
+    <FaChevronLeft />
+  </button>
+);
 
 const ProdukDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -65,18 +61,26 @@ const ProdukDetail: React.FC = () => {
 
   const [produk, setProduk] = useState<ProdukDetailView | null>(null);
   const [tab, setTab] = useState<'detail' | 'inspeksi'>('detail');
-
-  // 🔹 Slider refs untuk sinkronisasi
-  const [mainSlider, setMainSlider] = useState<any>(null);
-  const [thumbSlider, setThumbSlider] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   // 🔹 Fetch data produk
   useEffect(() => {
+    const controller = new AbortController();
+    setLoading(true);
+    setError('');
+
     axios
-      .get(`https://api-dealer-car-production.up.railway.app/mobil/${id}`)
+      .get(`https://api-dealer-car-production.up.railway.app/mobil/${id}`, {
+        signal: controller.signal,
+      })
       .then((res) => {
         const found = res.data.data;
-        if (!found) return;
+        if (!found) {
+          setError('Produk tidak ditemukan');
+          setLoading(false);
+          return;
+        }
 
         const fotoArray: FotoMobil[] = Array.isArray(found.foto)
           ? found.foto.map((f: any) => ({
@@ -86,87 +90,67 @@ const ProdukDetail: React.FC = () => {
           : [];
 
         setProduk({ ...found, foto: fotoArray });
+        setLoading(false);
       })
-      .catch((err) => console.error('Gagal mengambil detail produk:', err));
-  }, [id]);
+      .catch((err) => {
+        if (axios.isCancel(err)) return;
+        setError('Gagal mengambil detail produk');
+        setLoading(false);
+      });
 
-  if (!produk) return <Loading />;
+    return () => controller.abort();
+  }, [id]);
 
   // 🔹 Konfigurasi slider utama
   const mainSettings = {
     dots: false,
-    infinite: true,
+    infinite: (produk?.foto?.length ?? 0) > 1,
     speed: 600,
     slidesToShow: 1,
     slidesToScroll: 1,
-    autoplay: true,
+    autoplay: (produk?.foto?.length ?? 0) > 1,
     autoplaySpeed: 4000,
-    arrows: true,
+    arrows: (produk?.foto?.length ?? 0) > 1,
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
     adaptiveHeight: true,
-    asNavFor: thumbSlider,
-  };
-
-  // 🔹 Konfigurasi slider thumbnail
-  const thumbSettings = {
-    slidesToShow: Math.min(produk.foto.length, 5),
-    swipeToSlide: true,
-    focusOnSelect: true,
-    arrows: false,
-    asNavFor: mainSlider,
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-[#beccfc] text-gray-800 font-semibold">
       <div className="w-full max-w-4xl mx-auto px-4 py-6 md:py-10 flex-grow">
-        {/*  Tombol Kembali */}
         <button
           onClick={() => navigate('/')}
-          className="flex items-center gap-2 text-[#35467e] hover:text-[#22315d] font-medium mb-4" // ✅ hapus mb-4 duplikat
+          className="flex items-center gap-2 text-[#35467e] hover:text-[#22315d] font-medium mb-4"
         >
           <FaArrowLeft className="h-4 w-4" />
           Kembali ke Beranda
         </button>
 
-        {/*  Judul */}
+        {/* Judul */}
         <h2 className="text-2xl md:text-3xl font-bold text-[#35467e] mb-6 text-center">
-          {produk.merek} {produk.tipe}
+          {loading ? 'Loading...' : `${produk?.merk} ${produk?.tipe}`}
         </h2>
 
-        {/*  Slider Foto */}
+        {/* Slider Foto */}
         <div className="relative rounded-lg overflow-hidden shadow mb-4 bg-white w-full">
-          {produk.foto.length > 0 ? (
-            <>
-              {/* Main Slider */}
-              <Slider {...mainSettings} ref={setMainSlider}>
-                {produk.foto.map((img, index) => (
-                  <div key={index}>
-                    <img
-                      src={img.url}
-                      alt={`Foto ${index + 1}`}
-                      className="w-full max-h-[400px] object-cover"
-                      loading="lazy"
-                    />
-                  </div>
-                ))}
-              </Slider>
-
-              {/* Thumbnail Slider */}
-              <div className="mt-3">
-                <Slider {...thumbSettings} ref={setThumbSlider}>
-                  {produk.foto.map((img, index) => (
-                    <div key={index} className="px-1">
-                      <img
-                        src={img.url}
-                        alt={`Thumb ${index + 1}`}
-                        className="h-20 w-full object-cover rounded cursor-pointer border-2 border-transparent hover:border-[#35467e]"
-                      />
-                    </div>
-                  ))}
-                </Slider>
-              </div>
-            </>
+          {loading ? (
+            <div className="w-full h-[300px] bg-gray-200 animate-pulse flex items-center justify-center">
+              Loading foto...
+            </div>
+          ) : produk && produk.foto.length > 0 ? (
+            <Slider {...mainSettings}>
+              {produk.foto.map((img, index) => (
+                <div key={index}>
+                  <img
+                    src={img.url}
+                    alt={`Foto ${index + 1}`}
+                    className="w-full max-h-[400px] object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              ))}
+            </Slider>
           ) : (
             <div className="w-full h-[300px] flex items-center justify-center bg-gray-200 text-gray-500">
               Tidak ada foto tersedia
@@ -174,7 +158,7 @@ const ProdukDetail: React.FC = () => {
           )}
         </div>
 
-        {/*  Tabs */}
+        {/* Tabs */}
         <div className="flex justify-center gap-4 mb-6">
           <button
             onClick={() => setTab('detail')}
@@ -199,7 +183,9 @@ const ProdukDetail: React.FC = () => {
         </div>
 
         {/* Tab Content */}
-        {tab === 'detail' && (
+        {loading ? (
+          <div className="h-[200px] bg-gray-200 animate-pulse rounded-lg mb-10"></div>
+        ) : tab === 'detail' && produk ? (
           <div className="space-y-3 bg-white rounded-xl shadow px-4 py-5 mb-10 text-gray-700">
             <h1 className="text-2xl text-gray-600">Spesifikasi Detail</h1>
             <p>
@@ -221,20 +207,18 @@ const ProdukDetail: React.FC = () => {
               {new Intl.NumberFormat('id-ID').format(Number(produk.harga))}
             </p>
           </div>
-        )}
-
-        {tab === 'inspeksi' && (
+        ) : (
           <div className="bg-white rounded-xl shadow px-4 py-6 mb-10 text-gray-700">
             <h1 className="text-xl font-semibold mb-4 text-[#35467e]">
               Deskripsi Foto
             </h1>
-            {produk.foto.length === 0 ? (
+            {produk?.foto.length === 0 ? (
               <p className="text-sm text-gray-500">
                 Belum ada Deskripsi Foto untuk mobil ini.
               </p>
             ) : (
               <ul className="list-disc pl-6 space-y-2 text-sm">
-                {produk.foto.map((foto, idx) => (
+                {produk?.foto.map((foto, idx) => (
                   <li key={idx}>{foto.deskripsi || 'Tidak ada deskripsi.'}</li>
                 ))}
               </ul>
@@ -242,7 +226,7 @@ const ProdukDetail: React.FC = () => {
           </div>
         )}
 
-        {/*  Kontak Penjual */}
+        {/* Kontak Penjual */}
         <div className="flex justify-center items-center mb-8">
           <div className="w-full max-w-sm space-y-4 bg-[#808dc4] shadow-md rounded-md px-4 py-5 text-white text-sm">
             <h1 className="text-xl">Kontak penjual</h1>
@@ -263,23 +247,33 @@ const ProdukDetail: React.FC = () => {
           </div>
         </div>
 
-        {/* {Proses sell} */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <ProsesPembelian />
-        </div>
-
-        {/*  Rekomendasi Produk */}
-        <div className="bg-white rounded-xl shadow px-4 py-6 mb-10">
-          <h1 className="text-xl font-semibold mb-4 text-[#35467e]">
-            Rekomendasi Mobil Lain
-          </h1>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <ProdukPrev />
+        {/* Proses Pembelian */}
+        <div className="w-full bg-[#beccfc] py-10">
+          <div className="flex flex-wrap justify-center gap-6 px-4">
+            <ProsesPembelian />
           </div>
         </div>
 
-        <Footer />
+        {/* Rekomendasi Produk */}
+        {/* <div className=" rounded-xl shadow px-4 py-6 mb-10">
+          <h1 className="text-xl font-semibold mb-4 text-[#35467e]">
+            Rekomendasi Mobil Lain
+          </h1>
+          <ProdukPrev />
+        </div> */}
+        {/* Scroll to Top Button */}
+        <div className="fixed bottom-4 right-4">
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="bg-[#374470] hover:bg-[#526091] text-white p-3 rounded-full shadow-lg transition duration-300"
+          >
+            <FaArrowUp />
+          </button>
+        </div>
       </div>
+
+      {/* Footer full width */}
+      <Footer />
     </div>
   );
 };

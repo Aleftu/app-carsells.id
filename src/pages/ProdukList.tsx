@@ -119,22 +119,24 @@ const ProdukList: React.FC = () => {
                 </p>
 
                 {/* Tombol Aksi */}
-                <div className="mt-4 flex flex-col sm:flex-row gap-2">
-                  <Link
-                    to={`/produk/${mobil.id}`}
-                    className="w-full text-center px-3 py-1 bg-[#6978af] text-white text-sm rounded hover:bg-[#7086d6]"
-                  >
-                    Lihat Detail
-                  </Link>
-                  <a
-                    href={`https://wa.me/6281234567890?text=Halo,%20saya%20tertarik%20dengan%20mobil%20${mobil.merek}%20${mobil.tipe}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full text-center px-3 py-1 bg-[#374470] text-white text-sm rounded hover:bg-[#526091]"
-                  >
-                    Hubungi
-                  </a>
-                </div>
+                <div className="flex flex-col sm:flex-row gap-2 mt-4 text-white">
+                                <Link
+                                  to={`/produk/${mobil.id}`}
+                                  className="bg-[#6978af] rounded-md text-xs sm:text-sm py-1 px-3 w-full text-center hover:bg-[#7086d6]"
+                                >
+                                  Lihat Detail
+                                </Link>
+                                <a
+                                  href={`https://wa.me/6281234567890?text=Halo,%20saya%20tertarik%20dengan%20mobil%20${encodeURIComponent(
+                                    mobil.merek
+                                  )}%20${encodeURIComponent(mobil.tipe)}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="bg-[#374470] rounded-md text-xs sm:text-sm py-1 px-3 w-full text-center hover:bg-[#526091]"
+                                >
+                                  Hubungi
+                                </a>
+                              </div>
               </div>
             </div>
           ))}

@@ -45,7 +45,7 @@ const FotoList: React.FC = () => {
         'https://api-dealer-car-production.up.railway.app/mobil'
       );
       const data = Array.isArray(res.data) ? res.data : res.data.data;
-      console.log('🚗 mobilList:', data);
+      console.log('mobilList:', data);
       setMobilList(data || []);
     } catch (error) {
       console.error('❌ Gagal ambil mobil:', error);
@@ -82,7 +82,7 @@ const FotoList: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (!token) return toast.error('Token tidak ditemukan.');
 
     if (!deskripsi || !selectedMobilId || (!file && !editingId)) {
@@ -157,7 +157,7 @@ const FotoList: React.FC = () => {
   };
 
   const handleDeleteConfirmed = async () => {
-    const token = localStorage.getItem('token');
+   const token = sessionStorage.getItem('token');
     if (!token || !confirmDeleteId) return;
     setLoadingDelete(true);
     try {
